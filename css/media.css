@@ -1,0 +1,39 @@
+@media only screen and (max-width : 800px)  {
+    .symbol-coin, .changes, col {
+        display: none;
+    }
+}
+
+@media only screen and (max-width : 600px)  {
+    .content {
+        padding: 10px;
+    }
+
+    .saidbar {
+        width: 70px;
+    }
+
+    .content, .header {
+        margin-left: 83px;
+    }
+}
+
+@media only screen and (max-width : 360px)  {
+    .saidbar {
+        width: 50px;
+    }
+
+    .content, .header {
+        margin-left: 52px;
+    }
+
+    .mainmenu__list a {
+        width: 40px;
+        height: 40px;
+    }
+
+    .leave-acc-btn {
+        bottom: 9%;
+        left: 12%;
+    }
+}

@@ -1,0 +1,206 @@
+
+body {
+    background: #16052B;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+}
+
+.saidbar {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    padding-top: 30px;
+    border-right: 2px solid #261E35;
+}
+
+.active {
+    background: #372C44;
+}
+
+.content, .header {
+    margin-left: 103px;
+    padding: 20px 40px 20px 20px;
+}
+
+.logo__link {
+    position: relative;
+}
+
+.logo__link img:last-child {
+    position: absolute;
+    left: -1px;
+    top: -2px;
+}
+
+.mainmenu {
+    margin-top: 70px;
+}
+
+.mainmenu__list a {
+    width: 60px;
+    height: 60px;
+    border-radius: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.header {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.header .title {
+    text-align: start;
+    font-weight: 700;
+    font-size: 1.14rem;
+}
+
+.leave-acc-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    bottom: 9%;
+    left: 30%;
+}
+
+.title::first-letter {
+    text-transform: capitalize;
+}
+
+.crypto-info-table {
+    text-align: start;
+    width: 100%;
+    background-color: #3C354A;
+    border-radius: 30px;
+}
+
+.checkbox-table {
+    min-height: 260px;
+    text-align: center;
+}
+
+.crypto-info-table caption {
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+    margin: 0 0 20px 0;
+}
+
+.crypto-info-table th {
+    color: #BFB7B7;
+    font-size: 0.8rem;
+    height: 60px;
+    text-align: start;
+    vertical-align:middle;
+}
+
+.name-coin {
+    color: #BFB7B7;
+}
+
+.price-coin {
+    color: #9292C1;
+}
+
+.crypto-info-table td {
+    height: 50px;
+    vertical-align:middle;
+}
+
+.label-coin {
+    width: 30px;
+    height: 30px;
+}
+
+.chart-block {
+    min-height: 270px;
+    position: relative;
+    height:40vh; 
+    width:80vw;
+    margin: 0 0 40px 0;
+}
+
+.analytic-chart {}
+
+.period-block {
+    text-align: end;
+}
+
+.period {
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.show-more {
+}
+
+.table-btn-container {
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.table-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    background: linear-gradient(90deg, #AC6AEC 0%, #BB7FF5 100%);
+    cursor: pointer;
+}
+
+.currency-block {}
+
+.currency-select {
+    margin: 0 0 10px 30px;
+}
+
+
+
+
+
+
+
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 12px;
+    height: 12px;
+    -webkit-animation: spin 1s linear infinite; /* Safari */
+    animation: spin 1s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
