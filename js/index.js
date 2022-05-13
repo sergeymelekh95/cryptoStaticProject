@@ -28,6 +28,7 @@ const cryptoStatSPA = (function() {
         let mycountCoinsInTable = null;
         let mystartCountCoinsInTable = null;
         let mycountCoinsInRequest = null;
+        let supportedCurrencies = null;
         // let graph = null;
         // let myChart = null;
         // let subChart = null;
@@ -69,7 +70,13 @@ const cryptoStatSPA = (function() {
             if (window.sessionStorage.localData) {
                 const value = JSON.parse(window.sessionStorage.localData).currencySelectValue;
 
-                // debugger
+                const currencySelect = document.querySelector('#currency-select').getElementsByTagName('option');
+                for (let i = 0; i < currencySelect.length; ++i) {
+                    if (currencySelect[i].value === value) {
+                        currencySelect[i].selected = true;
+                    }
+                }
+                
             }
         };
 
@@ -85,6 +92,7 @@ const cryptoStatSPA = (function() {
 
             if (location.hash.slice(1) === routes.main.id) {
                 this.buildTable(mydataTable, mycountCoinsInTable, mystartCountCoinsInTable);
+                this.buildSelectCurrencies(supportedCurrencies);
 
                 if (mydataTable) {
                     this.addCheckbox();
@@ -160,15 +168,23 @@ const cryptoStatSPA = (function() {
         };
 
         this.buildSelectCurrencies = function(arr) {
-            let options = '';
-            for(let i = 0; i < arr.length; ++i) {
-                if (arr[i] === defaultCurrency) {
-                    options += `<option selected value="${arr[i]}">${arr[i]}</option>`;
-                } else {
-                    options += `<option value="${arr[i]}">${arr[i]}</option>`;
+
+            if (arr) {
+                supportedCurrencies = arr;
+
+                let options = '';
+                for(let i = 0; i < supportedCurrencies.length; ++i) {
+                    if (supportedCurrencies[i] === defaultCurrency) {
+                        options += `<option selected value="${supportedCurrencies[i]}">${supportedCurrencies[i]}</option>`;
+                    } else {
+                        options += `<option value="${supportedCurrencies[i]}">${supportedCurrencies[i]}</option>`;
+                    }
                 }
+    
+                contentContainer.querySelector('#currency-select').innerHTML = options;
+                this.addCurrencyValue();
             }
-            contentContainer.querySelector('#currency-select').innerHTML = options;
+
         };
 
         // this.updateGraph = function() {
@@ -314,7 +330,7 @@ const cryptoStatSPA = (function() {
         let startCountCoinsInTable = 0;
         const countCoinsInRequest = 30;
         let dataTable = [];
-        let supportedCurrencies = [];
+        let supportedCurrencies = null;
 
         this.init = function(view) {
             myModuleView = view;
@@ -329,16 +345,26 @@ const cryptoStatSPA = (function() {
             this.pageName = pageName;
 
             if(dataTable.length === 0 && pageName === routes.main.id) {
-                this.getDataForTable();
-                this.getSuppurtedCurrencies();
-            }
-
-            if(pageName === routes.main.id) {
+                if (JSON.parse(window.sessionStorage.localData).currencySelectValue) {
+                    this.getDataForTable(JSON.parse(window.sessionStorage.localData).currencySelectValue);
+                } else {
+                    this.getDataForTable();
+                }
+                
                 this.getSuppurtedCurrencies();
             }
 
             myModuleView.renderContent(this.pageName, countCoinsInRequest);
             myModuleView.renderHeader(this.pageName);
+
+            if(pageName === routes.main.id) {
+                if (supportedCurrencies) {
+                    myModuleView.buildSelectCurrencies(supportedCurrencies);
+                    this.getDataForTable(JSON.parse(window.sessionStorage.localData).currencySelectValue);
+                } else {
+                    this.getSuppurtedCurrencies();
+                }
+            }
         };
 
         const addZero = num => num < 10 ? `0${num}` : num;
@@ -346,12 +372,17 @@ const cryptoStatSPA = (function() {
         this.getSuppurtedCurrencies = function() {    
             fetch(`${api}/v3/simple/supported_vs_currencies`)
             .then(response => response.json())
-            .then(arr => myModuleView.buildSelectCurrencies(arr)); 
+            .then(arr => this.buildSelectCurrencies(arr)); 
+        };
+
+        this.buildSelectCurrencies = function(arr) {
+            supportedCurrencies = arr;
+
+            myModuleView.buildSelectCurrencies(supportedCurrencies);
         };
 
         this.getDataForTable = function(currencyValue) {
             currency = !currencyValue ? dafaulCurrency : currencyValue;
-
             fetch(`${api}/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=${countCoinsInRequest}&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d`)
             .then(response => response.json())
             .then(data => this.parseDataForTable(data));
@@ -444,10 +475,10 @@ const cryptoStatSPA = (function() {
         };
 
         this.getValue = function(event) {
-            if (event.target === currencySelect) {
-                myModuleModel.updateCurrency(currencySelect.value);
-
-                myModuleModel.setLocalData(checkedId, currencySelect.value);
+            if (event.target.id === 'currency-select') {
+                console.log(currencySelect.value);
+                myModuleModel.updateCurrency(event.target.value);
+                myModuleModel.setLocalData(checkedId, event.target.value);
             }
 
             if (event.target.type === 'checkbox') {
