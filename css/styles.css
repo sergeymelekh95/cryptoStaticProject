@@ -151,16 +151,21 @@ input[type="checkbox"] {
 .table-btn-container {
     margin: 20px;
     display: flex;
-    justify-content: center;
-    gap: 50px;
+    justify-content: end;
+    gap: 20px;
 }
 
 .table-btn {
     border: none;
-    border-radius: 10px;
-    padding: 5px 10px;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
     background: linear-gradient(90deg, #AC6AEC 0%, #BB7FF5 100%);
     cursor: pointer;
+}
+
+.table-btn:hover {
+    background: linear-gradient(90deg, #42354e 0%, #9c9c9d 100%);
 }
 
 .currency-block {}
