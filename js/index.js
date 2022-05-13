@@ -345,7 +345,7 @@ const cryptoStatSPA = (function() {
             this.pageName = pageName;
 
             if(dataTable.length === 0 && pageName === routes.main.id) {
-                if (JSON.parse(window.sessionStorage.localData).currencySelectValue) {
+                if (window.sessionStorage.localData) {
                     this.getDataForTable(JSON.parse(window.sessionStorage.localData).currencySelectValue);
                 } else {
                     this.getDataForTable();
@@ -476,7 +476,6 @@ const cryptoStatSPA = (function() {
 
         this.getValue = function(event) {
             if (event.target.id === 'currency-select') {
-                console.log(currencySelect.value);
                 myModuleModel.updateCurrency(event.target.value);
                 myModuleModel.setLocalData(checkedId, event.target.value);
             }
