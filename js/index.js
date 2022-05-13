@@ -29,19 +29,19 @@ const cryptoStatSPA = (function() {
         let mystartCountCoinsInTable = null;
         let mycountCoinsInRequest = null;
         let supportedCurrencies = null;
-        // let graph = null;
-        // let myChart = null;
-        // let subChart = null;
-        // const backgroundColors = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477","#66aa00","#b82e2e","#316395","#3366cc","#994499","#22aa99","#aaaa11","#6633cc","#e67300","#8b0707","#651067","#329262","#5574a6","#3b3eac","#b77322","#16d620","#b91383","#f4359e","#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922","#743411"];
-        // const defaultDataSet = [{
-        //     label: 'Choose coins in the checkbox below',
-        //     backgroundColor: 'rgb(255, 99, 132)',
-        //     borderColor: 'rgb(255, 99, 132)',
-        //     data: [],
-        // }];
-        // let dataSets = [];
-        // const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        // const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let chart = null;
+        let myChart = null;
+        let axisX = null;
+        const backgroundColors = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477","#66aa00","#b82e2e","#316395","#3366cc","#994499","#22aa99","#aaaa11","#6633cc","#e67300","#8b0707","#651067","#329262","#5574a6","#3b3eac","#b77322","#16d620","#b91383","#f4359e","#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922","#743411"];
+        const defaultDataSet = [{
+            label: 'Choose coins in the checkbox below',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [],
+        }];
+        let dataSets = [];
+        const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         // const loader = '<div class="loader"></div>';
 
         this.init = function(container, routes) {
@@ -187,12 +187,13 @@ const cryptoStatSPA = (function() {
 
         };
 
-        // this.updateGraph = function() {
+        //========================================================================================
 
-        //     if (!graph) {
+        // this.updateChart = function() {
+        //     if (!chart) {
         //         this.createGraph();
         //     } else {
-        //         graph = null;
+        //         chart = null;
         //         document.getElementById('analytic-chart').remove();
         //         const chartBlock = document.getElementById('chart-block');
         //         const canvasGraph = document.createElement('canvas');
@@ -233,18 +234,17 @@ const cryptoStatSPA = (function() {
         // };
 
         // this.createDataSet = function(timeArr, priceArr, idArr) {
-        //     subChart = timeArr;
+        //     axisX = timeArr;
 
         //     const nameCoin = idArr[idArr.length - 1]; // назварние с большой буквы
         //     // const nameCoin = idArr[idArr.length - 1][0].toUpperCase() + idArr[idArr.length - 1].slice(1); // назварние с большой буквы
 
         //     dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[idArr.length - 1]));
 
-        //     this.updateGraph();
+        //     this.updateChart();
         // };
 
         // this.removeDataSet = function(id) {
-
         //     if (!id) {
         //         dataSets = [];
         //     }
@@ -256,18 +256,18 @@ const cryptoStatSPA = (function() {
         //     }
 
         //     if (dataSets.length === 0) {
-        //         subChart = null;
+        //         axisX = null;
         //     }
 
         //     this.updateGraph();
         // };
 
         // this.createChart = function() {
-        //     const labels = !subChart ? '' : subChart;
+        //     const labels = !axisX ? '' : axisX;
         
         //     const data = {
         //         labels: labels,
-        //         datasets: dataSets.length === 0 ? defaultDataSet : dataSets
+        //         datasets: axisX.length === 0 ? defaultDataSet : axisX
         //     };
         
         //     const config = {
@@ -278,13 +278,15 @@ const cryptoStatSPA = (function() {
         //         }
         //     };
 
-        //     graph = document.getElementById('analytic-chart');
+        //     chart = document.getElementById('analytic-chart');
     
         //     myChart = new Chart(
-        //         graph,
+        //         chart,
         //         config
         //     );
         // };
+
+        //========================================================================================
 
         this.renderHeader = function(hashPageName) {
             headerTitle.innerHTML = routesObj[routeName].title;
@@ -328,42 +330,38 @@ const cryptoStatSPA = (function() {
         let pageName = null;
         let countCoinsInTable = 10;
         let startCountCoinsInTable = 0;
-        const countCoinsInRequest = 30;
+        const countCoinsInRequest = 100;
         let dataTable = [];
         let supportedCurrencies = null;
 
         this.init = function(view) {
             myModuleView = view;
 
-            if (location.hash.slice(1) === routes.main.id  || location.hash.slice(1) === "") {
+            if (location.hash.slice(1) === "") {
                 this.getSuppurtedCurrencies();
-                this.getDataForTable();
+                if (window.sessionStorage.localData) {
+                    this.getDataForTable(JSON.parse(window.sessionStorage.localData).currencySelectValue);
+                } else {
+                    this.getDataForTable();
+                }
             }
         };
 
         this.updateState = function(pageName) {
             this.pageName = pageName;
 
-            if(dataTable.length === 0 && pageName === routes.main.id) {
+            myModuleView.renderContent(this.pageName, countCoinsInRequest);
+            myModuleView.renderHeader(this.pageName);
+
+            if(dataTable.length === 0 && pageName === routes.main.id) { 
                 if (window.sessionStorage.localData) {
+                    myModuleView.buildSelectCurrencies(supportedCurrencies);
                     this.getDataForTable(JSON.parse(window.sessionStorage.localData).currencySelectValue);
                 } else {
                     this.getDataForTable();
                 }
                 
                 this.getSuppurtedCurrencies();
-            }
-
-            myModuleView.renderContent(this.pageName, countCoinsInRequest);
-            myModuleView.renderHeader(this.pageName);
-
-            if(pageName === routes.main.id) {
-                if (supportedCurrencies) {
-                    myModuleView.buildSelectCurrencies(supportedCurrencies);
-                    this.getDataForTable(JSON.parse(window.sessionStorage.localData).currencySelectValue);
-                } else {
-                    this.getSuppurtedCurrencies();
-                }
             }
         };
 
@@ -443,7 +441,6 @@ const cryptoStatSPA = (function() {
         };
 
         this.setLocalData = function(checkedId, currencySelectValue) {
-
             const localObj = {
                 checkedId,
                 currencySelectValue,
@@ -458,6 +455,7 @@ const cryptoStatSPA = (function() {
         let myModuleModel = null;
         let checkedId = [];
         let currencySelect = null;
+        let periodSelect = null;
 
         this.init = function(container, model) {
             myModuleContainer = container;
@@ -469,6 +467,7 @@ const cryptoStatSPA = (function() {
             this.updateState(); //первая отрисовка
 
             currencySelect = myModuleContainer.querySelector('#currency-select');
+            periodSelect = myModuleContainer.querySelector('#period');
 
             myModuleContainer.addEventListener('change', this.getValue);
             myModuleContainer.addEventListener('click', this.updateCoin);
