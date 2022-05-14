@@ -147,7 +147,7 @@ const cryptoStatSPA = (function() {
                 for(let i = startCountCoinsInTable; i < countCoinsInTable; ++i) {
                     dataTableStr += `
                         <tr>
-                            <td class="checkbox-table"><input type="checkbox" class="checkbox" id="${mydataTable[i].id}"></td>
+                            <td class="checkbox-table"><input type="checkbox" class="checkbox" id="${mydataTable[i].id}" name="${mydataTable[i].nameCoin}"></td>
                             <td><img class="label-coin" src="${mydataTable[i].image}" alt="label_coin"></td>
                             <td class="name-coin">${mydataTable[i].number}. ${mydataTable[i].nameCoin}</td>
                             <td class="symbol-coin">${mydataTable[i].symbol}</td>
@@ -163,7 +163,26 @@ const cryptoStatSPA = (function() {
 
                 // contentContainer.innerHTML = routesObj[routeName].render(`${routeName}-page`, dataTableStr);
                 // this.updateGraph();
+
                 this.addCheckbox();
+                
+                if (chart) {
+                    this.updateChart();
+                } 
+                // else {
+                //     if (window.sessionStorage.localDataChart) {//localDataChart!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //         // выцепить из сессио стораге и сделать dataSet
+                //         debugger
+                //     }
+                // }
+            }
+        };
+
+        this.updateDisableCheckboxes = function(state) {
+            const checkboxes = contentContainer.querySelectorAll('.checkbox');
+
+            for (let i = 0; i < checkboxes.length; ++i) {
+                checkboxes[i].disabled = state;            
             }
         };
 
@@ -189,29 +208,29 @@ const cryptoStatSPA = (function() {
 
         //========================================================================================
 
-        // this.updateChart = function() {
-        //     if (!chart) {
-        //         this.createGraph();
-        //     } else {
-        //         chart = null;
-        //         document.getElementById('analytic-chart').remove();
-        //         const chartBlock = document.getElementById('chart-block');
-        //         const canvasGraph = document.createElement('canvas');
-        //         canvasGraph.id = 'analytic-chart';
-        //         canvasGraph.classList.add('analytic-chart');
-        //         chartBlock.append(canvasGraph);
-        //         this.createGraph();
-        //     }
-        // };
+        this.updateChart = function() {
+            if (!chart) {
+                this.createChart();
+            } else {
+                chart = null;
+                document.getElementById('analytic-chart').remove();
+                const chartBlock = document.getElementById('chart-block');
+                const canvasGraph = document.createElement('canvas');
+                canvasGraph.id = 'analytic-chart';
+                canvasGraph.classList.add('analytic-chart');
+                chartBlock.append(canvasGraph);
+                this.createChart();
+            }
+        };
 
-        // class DataSet {
-        //     constructor(data, nameCoin, color) {
-        //         this.label = nameCoin;
-        //         this.backgroundColor = color;
-        //         this.borderColor = color;
-        //         this.data = data;
-        //     }
-        // }
+        class DataSet {
+            constructor(data, nameCoin, color) {
+                this.label = nameCoin;
+                this.backgroundColor = color;
+                this.borderColor = color;
+                this.data = data;
+            }
+        }
 
         // this.getWeekDays = function(numWeekDaysArr, priceArr, idArr) {
         //     const weekDays = [];
@@ -233,58 +252,56 @@ const cryptoStatSPA = (function() {
         //     this.createDataSet(orderMonths, priceArr, idArr);
         // };
 
-        // this.createDataSet = function(timeArr, priceArr, idArr) {
-        //     axisX = timeArr;
+        this.createDataSet = function(timeArr, priceArr, idArr, checkedNameCoinArr) {
+            axisX = timeArr;
+            const nameCoin = checkedNameCoinArr[checkedNameCoinArr.length - 1];
+            dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[checkedNameCoinArr.length - 1]));
+            this.updateChart();
+        };
 
-        //     const nameCoin = idArr[idArr.length - 1]; // назварние с большой буквы
-        //     // const nameCoin = idArr[idArr.length - 1][0].toUpperCase() + idArr[idArr.length - 1].slice(1); // назварние с большой буквы
+        this.removeDataSet = function(id, name) {
+            if (!name) {
+                dataSets = [];
+            }
 
-        //     dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[idArr.length - 1]));
+            for(let i = 0; i < dataSets.length; ++i) {
+                if(dataSets[i].label === name) {
+                    dataSets.splice(i, 1);
+                }
+            }
 
-        //     this.updateChart();
-        // };
+            if (dataSets.length === 0) {
+                axisX = null;
+            }
 
-        // this.removeDataSet = function(id) {
-        //     if (!id) {
-        //         dataSets = [];
-        //     }
+            this.updateChart();
+        };
 
-        //     for(let i = 0; i < dataSets.length; ++i) {
-        //         if(dataSets[i].label === id) {
-        //             dataSets.splice(i, 1);
-        //         }
-        //     }
+        this.createChart = function() {
+            // debugger
 
-        //     if (dataSets.length === 0) {
-        //         axisX = null;
-        //     }
+            const labels = !axisX ? '' : axisX;
 
-        //     this.updateGraph();
-        // };
-
-        // this.createChart = function() {
-        //     const labels = !axisX ? '' : axisX;
+            const data = {
+                labels: labels,
+                datasets: !axisX ? defaultDataSet : dataSets
+            };
         
-        //     const data = {
-        //         labels: labels,
-        //         datasets: axisX.length === 0 ? defaultDataSet : axisX
-        //     };
-        
-        //     const config = {
-        //         type: 'line',
-        //         data: data,
-        //         options: {
-        //             maintainAspectRatio: false
-        //         }
-        //     };
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    maintainAspectRatio: false
+                }
+            };
 
-        //     chart = document.getElementById('analytic-chart');
+            chart = document.getElementById('analytic-chart');
     
-        //     myChart = new Chart(
-        //         chart,
-        //         config
-        //     );
-        // };
+            myChart = new Chart(
+                chart,
+                config
+            );
+        };
 
         //========================================================================================
 
@@ -320,6 +337,7 @@ const cryptoStatSPA = (function() {
         this.updateStatePrevBtn = function(state) {
             myModuleContainer.querySelector('#prev-btn').disabled = state;
         };
+
     }
 
     function ModuleModel() {
@@ -416,6 +434,8 @@ const cryptoStatSPA = (function() {
 
             myModuleView.buildTable(dataTable, countCoinsInTable, startCountCoinsInTable);
             myModuleView.checkDisabledBtn(countCoinsInRequest);
+
+            myModuleView.createChart();
         };
 
         this.updateCurrency = function(value) {
@@ -440,13 +460,41 @@ const cryptoStatSPA = (function() {
             myModuleView.checkDisabledBtn(countCoinsInRequest);
         };
 
-        this.setLocalData = function(checkedId, currencySelectValue) {
+        this.setLocalData = function(checkedId, currencySelectValue, checkedNameCoin) {
             const localObj = {
                 checkedId,
                 currencySelectValue,
+                checkedNameCoin,
             };
 
             window.sessionStorage.setItem('localData', JSON.stringify(localObj));
+        };
+
+        this.addDataChart = function(checkedId, periodSelecValue, checkedNameCoin) {
+
+            if (periodSelecValue === 'hour') {
+                myModuleView.updateDisableCheckboxes(true);
+                fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${!currency ? dafaulCurrency : currency}&days=1&interval=minutely`).
+                then(response => response.json()).
+                then(data => parseDataHour(data.prices.slice(-13)));
+            }
+
+            const parseDataHour = data => {
+                myModuleView.updateDisableCheckboxes(false);
+                const timeArr = [];
+                const priceArr = [];
+
+                for (let  i = 0; i < data.length; ++i) {
+                    timeArr.push(`${addZero(new Date(data[i][0]).getHours())}:${addZero(new Date(data[i][0]).getMinutes())}`);
+                    priceArr.push(data[i][1].toFixed(1));
+                }
+
+                myModuleView.createDataSet(timeArr, priceArr, checkedId, checkedNameCoin);
+            };
+        };
+
+        this.removeDataChart = function(id, name) {
+            myModuleView.removeDataSet(id, name);
         };
     }
 
@@ -454,6 +502,7 @@ const cryptoStatSPA = (function() {
         let myModuleContainer = null;
         let myModuleModel = null;
         let checkedId = [];
+        let checkedNameCoin = [];
         let currencySelect = null;
         let periodSelect = null;
 
@@ -482,14 +531,22 @@ const cryptoStatSPA = (function() {
             if (event.target.type === 'checkbox') {
                 if (event.target.checked) {
                     checkedId.push(event.target.id);
+                    checkedNameCoin.push(event.target.name);
+                    myModuleModel.addDataChart(checkedId, periodSelect.value, checkedNameCoin);
                 } else {
+                    myModuleModel.removeDataChart(event.target.id, event.target.name);
                     const i = checkedId.indexOf(event.target.id);
                     if (i >= 0) {
+                        checkedNameCoin.splice(i, 1);
                         checkedId.splice(i ,1);
                     }
                 }
 
-                myModuleModel.setLocalData(checkedId, currencySelect.value);
+                myModuleModel.setLocalData(checkedId, currencySelect.value, checkedNameCoin);
+            }
+
+            if (event.target === periodSelect) {
+                myModuleModel.addDataChart(checkedId, event.target.value, checkedNameCoin);
             }
         };
 
