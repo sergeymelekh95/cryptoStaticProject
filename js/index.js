@@ -31,7 +31,7 @@ const cryptoStatSPA = (function() {
         let supportedCurrencies = null;
         let chart = null;
         let myChart = null;
-        let axisX = null;
+        let myTimeArr = null;
         const backgroundColors = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477","#66aa00","#b82e2e","#316395","#3366cc","#994499","#22aa99","#aaaa11","#6633cc","#e67300","#8b0707","#651067","#329262","#5574a6","#3b3eac","#b77322","#16d620","#b91383","#f4359e","#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922","#743411"];
         const defaultDataSet = [{
             label: 'Choose coins in the checkbox below',
@@ -43,6 +43,7 @@ const cryptoStatSPA = (function() {
         const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         // const loader = '<div class="loader"></div>';
+        let localChartData = {};
 
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -114,7 +115,6 @@ const cryptoStatSPA = (function() {
         // const isLoader = num => !num ? loader : num;
 
         this.buildTable = function(dataTable, countCoinsInTable, startCountCoinsInTable) {
-
             if (dataTable) {
                 mydataTable = dataTable;
                 mycountCoinsInTable = countCoinsInTable;
@@ -161,20 +161,15 @@ const cryptoStatSPA = (function() {
                 dataTableStr += `</tbody>`;
                 contentContainer.querySelector('#crypto-info-table').innerHTML = dataTableStr;
 
-                // contentContainer.innerHTML = routesObj[routeName].render(`${routeName}-page`, dataTableStr);
-                // this.updateGraph();
-
                 this.addCheckbox();
-                
+
                 if (chart) {
                     this.updateChart();
-                } 
-                // else {
-                //     if (window.sessionStorage.localDataChart) {//localDataChart!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //         // выцепить из сессио стораге и сделать dataSet
-                //         debugger
-                //     }
-                // }
+                } else {
+                    if (window.sessionStorage.localChartData) {
+                        this.updateChart(JSON.parse(window.sessionStorage.localChartData));
+                    }
+                }
             }
         };
 
@@ -187,7 +182,6 @@ const cryptoStatSPA = (function() {
         };
 
         this.buildSelectCurrencies = function(arr) {
-
             if (arr) {
                 supportedCurrencies = arr;
 
@@ -203,60 +197,48 @@ const cryptoStatSPA = (function() {
                 contentContainer.querySelector('#currency-select').innerHTML = options;
                 this.addCurrencyValue();
             }
-
         };
 
-        //========================================================================================
-
-        this.updateChart = function() {
-            if (!chart) {
-                this.createChart();
+        this.updateChart = function(localChartData) {
+            if (!localChartData) {
+                if (!chart) {
+                    this.createChart();
+                } else {
+                    chart = null;
+                    document.getElementById('analytic-chart').remove();
+                    const chartBlock = document.getElementById('chart-block');
+                    const canvasGraph = document.createElement('canvas');
+                    canvasGraph.id = 'analytic-chart';
+                    canvasGraph.classList.add('analytic-chart');
+                    chartBlock.append(canvasGraph);
+                    this.createChart();
+                }
             } else {
-                chart = null;
-                document.getElementById('analytic-chart').remove();
-                const chartBlock = document.getElementById('chart-block');
-                const canvasGraph = document.createElement('canvas');
-                canvasGraph.id = 'analytic-chart';
-                canvasGraph.classList.add('analytic-chart');
-                chartBlock.append(canvasGraph);
+                dataSets = localChartData.dataChart;
+                myTimeArr = localChartData.timeData;
                 this.createChart();
             }
         };
 
         class DataSet {
-            constructor(data, nameCoin, color) {
+            constructor(data, nameCoin, color, id) {
                 this.label = nameCoin;
                 this.backgroundColor = color;
                 this.borderColor = color;
                 this.data = data;
+                this.id = id;
             }
         }
 
-        // this.getWeekDays = function(numWeekDaysArr, priceArr, idArr) {
-        //     const weekDays = [];
-
-        //     for(let i = 0; i < numWeekDaysArr.length - 1; ++i) {
-        //         weekDays.push(week[numWeekDaysArr[i]]);
-        //     }
-        //     weekDays.push('Now');
-
-        //     this.createDataSet(weekDays, priceArr, idArr);
-        // };
-
-        // this.getMonths = function(numMonthArr, priceArr, idArr) {
-        //     const orderMonths = [];
-
-        //     for(let i = 0; i < numMonthArr.length; ++i) {
-        //         orderMonths.push(months[numMonthArr[i]]);
-        //     }
-        //     this.createDataSet(orderMonths, priceArr, idArr);
-        // };
-
         this.createDataSet = function(timeArr, priceArr, idArr, checkedNameCoinArr) {
-            axisX = timeArr;
+            myTimeArr = timeArr;
             const nameCoin = checkedNameCoinArr[checkedNameCoinArr.length - 1];
-            dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[checkedNameCoinArr.length - 1]));
+            dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[JSON.parse(window.sessionStorage.localData).checkedId.length - 1], idArr[idArr.length - 1]));
             this.updateChart();
+
+            localChartData.dataChart = dataSets;
+            localChartData.timeData = myTimeArr;
+            window.sessionStorage.setItem('localChartData', JSON.stringify(localChartData));
         };
 
         this.removeDataSet = function(id, name) {
@@ -271,20 +253,22 @@ const cryptoStatSPA = (function() {
             }
 
             if (dataSets.length === 0) {
-                axisX = null;
+                myTimeArr = null;
             }
 
             this.updateChart();
+
+            localChartData.dataChart = dataSets;
+            localChartData.timeData = myTimeArr;
+            window.sessionStorage.setItem('localChartData', JSON.stringify(localChartData));
         };
 
         this.createChart = function() {
-            // debugger
-
-            const labels = !axisX ? '' : axisX;
+            const labels = !myTimeArr ? '' : myTimeArr;
 
             const data = {
                 labels: labels,
-                datasets: !axisX ? defaultDataSet : dataSets
+                datasets: !myTimeArr ? defaultDataSet : dataSets
             };
         
             const config = {
@@ -296,14 +280,11 @@ const cryptoStatSPA = (function() {
             };
 
             chart = document.getElementById('analytic-chart');
-    
             myChart = new Chart(
                 chart,
                 config
             );
         };
-
-        //========================================================================================
 
         this.renderHeader = function(hashPageName) {
             headerTitle.innerHTML = routesObj[routeName].title;
@@ -338,6 +319,37 @@ const cryptoStatSPA = (function() {
             myModuleContainer.querySelector('#prev-btn').disabled = state;
         };
 
+        this.getWeekDays = function(numWeekDaysArr, priceArr, idArr, checkedNameCoin) {
+            const weekDays = [];
+
+            for(let i = 0; i < numWeekDaysArr.length - 1; ++i) {
+                weekDays.push(week[numWeekDaysArr[i]]);
+            }
+            weekDays.push('Now');
+
+            this.createDataSet(weekDays, priceArr, idArr, checkedNameCoin);
+        };
+
+        this.getMonths = function(numMonthArr, priceArr, idArr, checkedNameCoin) {
+            const orderMonths = [];
+
+            for(let i = 0; i < numMonthArr.length; ++i) {
+                orderMonths.push(months[numMonthArr[i]]);
+            }
+            this.createDataSet(orderMonths, priceArr, idArr, checkedNameCoin);
+        };
+
+        // this.clearCheckbox = function() {
+        //     const checkboxes = myModuleContainer.querySelectorAll('.checkbox');
+
+        //     for (let i = 0; i < checkboxes.length; ++i) {
+        //         checkboxes[i].checked = false;
+        //     }
+        // };
+
+        // this.clearChart = function() {
+        //     this.removeDataSet();
+        // };
     }
 
     function ModuleModel() {
@@ -348,9 +360,10 @@ const cryptoStatSPA = (function() {
         let pageName = null;
         let countCoinsInTable = 10;
         let startCountCoinsInTable = 0;
-        const countCoinsInRequest = 100;
+        const countCoinsInRequest = 30;
         let dataTable = [];
         let supportedCurrencies = null;
+        let chartCurrency = 'usd';
 
         this.init = function(view) {
             myModuleView = view;
@@ -435,7 +448,10 @@ const cryptoStatSPA = (function() {
             myModuleView.buildTable(dataTable, countCoinsInTable, startCountCoinsInTable);
             myModuleView.checkDisabledBtn(countCoinsInRequest);
 
-            myModuleView.createChart();
+            if (!window.sessionStorage.localData) {
+                myModuleView.createChart();
+            }
+            
         };
 
         this.updateCurrency = function(value) {
@@ -471,10 +487,10 @@ const cryptoStatSPA = (function() {
         };
 
         this.addDataChart = function(checkedId, periodSelecValue, checkedNameCoin) {
-
+            //=============================================================
             if (periodSelecValue === 'hour') {
                 myModuleView.updateDisableCheckboxes(true);
-                fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${!currency ? dafaulCurrency : currency}&days=1&interval=minutely`).
+                fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=1&interval=minutely`).
                 then(response => response.json()).
                 then(data => parseDataHour(data.prices.slice(-13)));
             }
@@ -491,11 +507,112 @@ const cryptoStatSPA = (function() {
 
                 myModuleView.createDataSet(timeArr, priceArr, checkedId, checkedNameCoin);
             };
+            //=============================================================
+            if (periodSelecValue === 'day') {
+                myModuleView.updateDisableCheckboxes(true);
+                fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=1&interval=hourly`).
+                then(response => response.json()).
+                then(data => parseDataDay(data.prices));
+            }
+
+            const parseDataDay = data => {
+                myModuleView.updateDisableCheckboxes(false);
+                const timeArr = [];
+                const priceArr = [];
+
+                for (let  i = 0; i < data.length; ++i) {
+                    timeArr.push(`${addZero(new Date(data[i][0]).getDate())}th,${addZero(new Date(data[i][0]).getHours())}h`);
+                    priceArr.push(data[i][1].toFixed(1));
+                }
+
+                myModuleView.createDataSet(timeArr, priceArr, checkedId, checkedNameCoin);
+            };
+            //=================================================================================
+
+            if (periodSelecValue === 'week') {
+                myModuleView.updateDisableCheckboxes(true);
+                fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=7&interval=daily`).
+                then(response => response.json()).
+                then(data => parseDataWeek(data.prices));
+            }
+
+            const parseDataWeek = data => {
+                myModuleView.updateDisableCheckboxes(false);
+                const timeArr = [];
+                const priceArr = [];
+
+                for (let  i = 0; i < data.length; ++i) {
+                    timeArr.push(`${new Date(data[i][0]).getDay()}`);
+                    priceArr.push(data[i][1].toFixed(1));
+                }
+
+                myModuleView.getWeekDays(timeArr, priceArr, checkedId, checkedNameCoin);
+            };
+            //=================================================================================
+
+            if (periodSelecValue == 'month') {
+                myModuleView.updateDisableCheckboxes(true);
+                fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=30&interval=daily`).
+                then(response => response.json()).
+                then(data => parseDataMonth(data.prices));
+            }
+
+            const parseDataMonth = data => {
+                myModuleView.updateDisableCheckboxes(false);
+                const timeArr = [];
+                const priceArr = [];
+
+                for (let  i = 0; i < data.length; ++i) {
+                    timeArr.push(`${addZero(new Date(data[i][0]).getDate())}.${addZero(new Date(data[i][0]).getMonth())}`);
+                    priceArr.push(data[i][1].toFixed(1));
+                }
+
+                myModuleView.createDataSet(timeArr, priceArr, checkedId, checkedNameCoin);
+            };
+            //=================================================================================
+
+            if (periodSelecValue == 'year') {
+                myModuleView.updateDisableCheckboxes(true);
+                fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=365&interval=daily`).
+                then(response => response.json()).
+                then(data => parseDataYear(data.prices));
+            }
+
+            const parseDataYear = data => {
+                myModuleView.updateDisableCheckboxes(false);
+                const timeArr = [];
+                const priceArr = [];
+
+                for(let i = 0; i < data.length; ++i) {
+                    if (data.indexOf(data[i]) % 30 === 0) {
+                        timeArr.push(new Date(data[i][0]).getMonth());
+                        priceArr.push((data[i][1]).toFixed(1));
+                    }
+                }
+
+                timeArr.pop();
+                priceArr.pop();
+                myModuleView.getMonths(timeArr, priceArr, checkedId, checkedNameCoin);
+            };
         };
 
         this.removeDataChart = function(id, name) {
             myModuleView.removeDataSet(id, name);
         };
+
+        // this.clearChart = function() {
+        //     const dataChart = JSON.parse(window.sessionStorage.localChartData).dataChart;
+
+        //     if (dataChart.length > 0) {
+        //         myModuleView.clearCheckbox();
+        //         myModuleView.clearChart();
+        //         this.clearLocalData();
+        //     }
+        // };
+
+        // this.clearLocalData = function() {
+        //     sessionStorage.clear();
+        // };
     }
 
     function ModuleController() {
@@ -529,6 +646,7 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.type === 'checkbox') {
+
                 if (event.target.checked) {
                     checkedId.push(event.target.id);
                     checkedNameCoin.push(event.target.name);
@@ -541,12 +659,11 @@ const cryptoStatSPA = (function() {
                         checkedId.splice(i ,1);
                     }
                 }
-
                 myModuleModel.setLocalData(checkedId, currencySelect.value, checkedNameCoin);
             }
 
             if (event.target === periodSelect) {
-                myModuleModel.addDataChart(checkedId, event.target.value, checkedNameCoin);
+                // myModuleModel.clearChart();
             }
         };
 
