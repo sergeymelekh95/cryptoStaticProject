@@ -764,6 +764,10 @@ const cryptoStatSPA = (function() {
             if (event.target.id === 'prev-btn') {
                 myModuleModel.showPrevCoins();
             }
+
+            if (event.target.id === 'clear-btn') {
+                myModuleModel.clearChart();
+            }
         };
     }
 

@@ -23,8 +23,13 @@ const HomePage = {
             </div>
             <table id="crypto-info-table" class="crypto-info-table"></table>
             <div class="table-btn-container">
-                <button id="prev-btn" class="table-btn">&lt;</button>
-                <button id="next-btn" class="table-btn">&gt;</button>
+                <div>
+                    <button id="clear-btn" class="clear-btn">Clear</button>
+                </div>
+                <div>
+                    <button id="prev-btn" class="table-btn">&lt;</button>
+                    <button id="next-btn" class="table-btn">&gt;</button>
+                </div>                
             </div>
         </section>
         `;
