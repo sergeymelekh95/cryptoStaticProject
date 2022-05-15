@@ -32,7 +32,7 @@ const cryptoStatSPA = (function() {
         let chart = null;
         let myChart = null;
         let myTimeArr = null;
-        const backgroundColors = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477","#66aa00","#b82e2e","#316395","#3366cc","#994499","#22aa99","#aaaa11","#6633cc","#e67300","#8b0707","#651067","#329262","#5574a6","#3b3eac","#b77322","#16d620","#b91383","#f4359e","#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922","#743411"];
+        let backgroundColors = ['#743411', '#0c5922', '#bea413', '#668d1c', '#2a778d', '#a9c413', '#9c5935', '#f4359e', '#b91383', '#16d620', '#b77322', '#3b3eac', '#5574a6', '#329262', '#651067', '#8b0707', '#e67300', '#6633cc', '#aaaa11', '#22aa99', '#994499', '#3366cc', '#316395', '#b82e2e', '#66aa00', '#dd4477', '#0099c6', '#990099', '#109618', '#ff9900', '#dc3912', '#3366cc'];
         const defaultDataSet = [{
             label: 'Choose coins in the checkbox below',
             backgroundColor: 'rgb(255, 99, 132)',
@@ -43,7 +43,7 @@ const cryptoStatSPA = (function() {
         const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         // const loader = '<div class="loader"></div>';
-        let localChartData = {};
+        const localChartData = {};
 
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -52,6 +52,17 @@ const cryptoStatSPA = (function() {
             contentContainer = myModuleContainer.querySelector("#content");
             header = myModuleContainer.querySelector("#header");
             headerTitle = myModuleContainer.querySelector(".title");
+
+            this.updateColors();
+        };
+
+        this.updateColors = function() {
+            if (window.sessionStorage.colorsLine) {
+                const parseColors = JSON.parse(window.sessionStorage.colorsLine);
+                if (parseColors.length !== 0) {
+                    backgroundColors = parseColors;
+                }
+            }
         };
 
         this.addCheckbox = function() {
@@ -233,7 +244,13 @@ const cryptoStatSPA = (function() {
         this.createDataSet = function(timeArr, priceArr, idArr, checkedNameCoinArr) {
             myTimeArr = timeArr;
             const nameCoin = checkedNameCoinArr[checkedNameCoinArr.length - 1];
-            dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[JSON.parse(window.sessionStorage.localData).checkedId.length - 1], idArr[idArr.length - 1]));
+
+            dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[backgroundColors.length - 1], idArr[idArr.length - 1]));
+            //удаляю последний(выбранный) цвет для того что бы его потороно не ипосльзовать
+            backgroundColors.pop();
+            //обновляем каждый клик
+            window.sessionStorage.setItem('colorsLine', JSON.stringify(backgroundColors));
+
             this.updateChart();
 
             localChartData.dataChart = dataSets;
@@ -245,6 +262,14 @@ const cryptoStatSPA = (function() {
             if (!name) {
                 dataSets = [];
             }
+
+            //когда выключаем чекбокс вычитываем цвет линии и пушим цвет обратно в массив (чтобы все было попорядку и не повторялось)
+            for (let i = 0; i < dataSets.length; ++i) {
+                if(dataSets[i].id === id) {
+                    backgroundColors.push(dataSets[i].backgroundColor);
+                }  
+            }
+            window.sessionStorage.setItem('colorsLine', JSON.stringify(backgroundColors));
 
             for(let i = 0; i < dataSets.length; ++i) {
                 if(dataSets[i].label === name) {
@@ -275,7 +300,21 @@ const cryptoStatSPA = (function() {
                 type: 'line',
                 data: data,
                 options: {
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Current in USD'
+                            },
+                        }
+                    }
                 }
             };
 
@@ -360,7 +399,7 @@ const cryptoStatSPA = (function() {
         let pageName = null;
         let countCoinsInTable = 10;
         let startCountCoinsInTable = 0;
-        const countCoinsInRequest = 30;
+        const countCoinsInRequest = 100;
         let dataTable = [];
         let supportedCurrencies = null;
         let chartCurrency = 'usd';
