@@ -628,7 +628,7 @@ const cryptoStatSPA = (function() {
                 const priceArr = [];
 
                 for (let  i = 0; i < data.length; ++i) {
-                    timeArr.push(`${addZero(new Date(data[i][0]).getDate())}.${addZero(new Date(data[i][0]).getMonth())}`);
+                    timeArr.push(`${addZero(new Date(data[i][0]).getDate())}.${addZero(new Date(data[i][0]).getMonth() + 1)}`);
                     priceArr.push(data[i][1].toFixed(1));
                 }
 
@@ -687,6 +687,7 @@ const cryptoStatSPA = (function() {
         let checkedId = [];
         let checkedNameCoin = [];
         let currencySelect = null;
+        let currencySelectValue = null;
         let periodSelect = null;
         let selectPeriodValue = null;
 
@@ -716,6 +717,7 @@ const cryptoStatSPA = (function() {
                 if (event.target.checked) {
                     checkedId.push(event.target.id);
                     checkedNameCoin.push(event.target.name);
+                    
                     myModuleModel.addDataChart(checkedId,selectPeriodValue || periodSelect.value, checkedNameCoin);
                 } else {
                     myModuleModel.removeDataChart(event.target.id, event.target.name);
@@ -743,8 +745,15 @@ const cryptoStatSPA = (function() {
 
         this.updateState = function() {
             const hashPageName = location.hash.slice(1).toLowerCase();
-
             myModuleModel.updateState(hashPageName);
+            
+            if (hashPageName === routes.main.id) {
+                periodSelect = myModuleContainer.querySelector('#period');
+                selectPeriodValue = periodSelect.value;
+
+                currencySelect = myModuleContainer.querySelector('#currency-select');
+                currencySelectValue = currencySelect.value;
+            }
         };
 
         this.updateCoin = function(event) {
