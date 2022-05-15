@@ -5,7 +5,7 @@ const HomePage = {
         return `
         <section class="${className}" id="chart-section">
             <div class="period-block">
-                <select name="period" id="period" class="period">
+                <select name="period" id="period" class="period select">
                     <option value="hour">Last hour</option>
                     <option value="day">Last 24h</option>
                     <option value="week">Last 7d</option>
@@ -19,13 +19,25 @@ const HomePage = {
         </section>
         <section class="${className}">
             <div id="currency-block" class="currency-block">
-                <select name="currency-select" id="currency-select" class="currency-select"></select>
+                <select name="currency-select" id="currency-select" class="currency-select select"></select>
             </div>
             <table id="crypto-info-table" class="crypto-info-table"></table>
             <div class="table-btn-container">
-                <button id="prev-btn" class="table-btn">&#8249;</button>
-                <button id="next-btn" class="table-btn">&#8250;</button>
+                <button id="prev-btn" class="table-btn">&lt;</button>
+                <button id="next-btn" class="table-btn">&gt;</button>
             </div>
+        </section>
+        `;
+    }
+};
+
+const CoinInfo = {
+    id: "info",
+    title: "Coin info",
+    render: (className = "container", ...rest) => {
+        return `
+        <section class="${className}">
+            <p>Coin Info Content</p>
         </section>
         `;
     }

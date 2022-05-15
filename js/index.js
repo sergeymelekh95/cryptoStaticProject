@@ -4,6 +4,7 @@ const components = {
     header: Header,
     saidbar: Saidbar,
     content: Content,
+    footer: Footer
 };
   
 // Список поддердживаемых роутов (from pages.js)
@@ -12,6 +13,7 @@ const routes = {
     about: AboutPage,
     default: HomePage,
     error: ErrorPage,
+    info: CoinInfo,
 };
 
 const cryptoStatSPA = (function() {
@@ -686,6 +688,7 @@ const cryptoStatSPA = (function() {
         let checkedNameCoin = [];
         let currencySelect = null;
         let periodSelect = null;
+        let selectPeriodValue = null;
 
         this.init = function(container, model) {
             myModuleContainer = container;
@@ -710,11 +713,10 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.type === 'checkbox') {
-
                 if (event.target.checked) {
                     checkedId.push(event.target.id);
                     checkedNameCoin.push(event.target.name);
-                    myModuleModel.addDataChart(checkedId, periodSelect.value, checkedNameCoin);
+                    myModuleModel.addDataChart(checkedId,selectPeriodValue || periodSelect.value, checkedNameCoin);
                 } else {
                     myModuleModel.removeDataChart(event.target.id, event.target.name);
                     const i = checkedId.indexOf(event.target.id);
@@ -723,11 +725,14 @@ const cryptoStatSPA = (function() {
                         checkedId.splice(i ,1);
                     }
                 }
-                myModuleModel.setLocalData(checkedId, currencySelect.value, checkedNameCoin, periodSelect.value);
+
+                myModuleModel.setLocalData(checkedId, currencySelect.value, checkedNameCoin, selectPeriodValue || periodSelect.value);
             }
 
             if (event.target.id === 'period') {
+                selectPeriodValue = event.target.value;
                 //при изменении периода обновляем график и все данные в sessionStorage
+
                 checkedId = [];
                 checkedNameCoin = [];
                 myModuleModel.setLocalData(checkedId, currencySelect.value, checkedNameCoin, periodSelect.value);

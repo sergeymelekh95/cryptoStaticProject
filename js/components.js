@@ -3,6 +3,9 @@ const Header = {
       return `
         <header id="header" class="header ${customClass}">
             <h1 class="title"></h1>
+            <a href="#login" id="login" class="login">
+                <img src="./img/login.svg" alt="login">
+            </a>
         </header>
       `;
     }
@@ -24,6 +27,9 @@ const Saidbar = {
                         <a class="mainmenu__link" href="#main"><img src="./img/menu_icons/home_page.svg" alt="home_page_icon"></a>
                     </li>
                     <li>
+                        <a class="mainmenu__link" href="#info"><img src="./img/menu_icons/coin_info.svg" alt="coin_info"></a>
+                    </li>
+                    <li>
                         <a class="mainmenu__link" href="#about"><img src="./img/menu_icons/about_page.svg" alt="about_page_icon"></a>
                     </li>
                 </ul>
@@ -41,5 +47,14 @@ const Saidbar = {
 const Content = {
     render: (customClass = "") => {
         return `<div class="content ${customClass}" id="content"></div>`;
+    }
+};
+
+const Footer = {
+    render: (customClass = "") => {
+        return `
+        <footer id="footer" class="footer ${customClass}">
+            <p>&#169; by Siarhei Melekh</p>
+        </footer>`;
     }
 };
