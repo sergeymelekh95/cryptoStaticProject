@@ -125,7 +125,7 @@ body {
 .chart-block {
     min-height: 270px;
     position: relative;
-    height:40vh; 
+    height:50vh; 
     width:80vw;
     margin: 0 auto;
     /* margin: 0 0 40px 0; */
