@@ -42,17 +42,21 @@ const CoinInfo = {
     render: (className = "container", ...rest) => {
         return `
         <section class="${className}">
-            <p>Coin Info Content</p>
-            <div class="market-cap-block">
-                <div class="switch-block">
-                    <span>Switch chart</span>
-                    <label class="switch">
-                        <input type="checkbox" id="switch-chart">
-                        <span class="slider round"></span>
-                    </label>
+            <div class="coin-stat-content">
+                <div class="market-cap-block">
+                    <div class="switch-block">
+                        <span>Switch chart</span>
+                        <label class="switch">
+                            <input type="checkbox" id="switch-chart">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div id="market-cup-chart-block" class="chart-block market-cup-chart-block">
+                        <canvas id="market-cup-chart" class="market-cup-chart"></canvas>
+                    </div>
                 </div>
-                <div id="market-cup-chart-block" class="chart-block market-cup-chart-block">
-                    <canvas id="market-cup-chart" class="market-cup-chart"></canvas>
+                <div class="coin-info-table-block">
+                    <table id="coin-stat-table" class="coin-info-table"></table>
                 </div>
             </div>
         </section>

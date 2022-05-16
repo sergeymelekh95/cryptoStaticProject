@@ -1,5 +1,15 @@
+@media only screen and (max-width : 1024px) {
+    .coin-stat-content {
+        flex-wrap: wrap-reverse;
+    }
+
+    .coin-info-table-block {
+        min-height: 600px;
+    }
+}
+
 @media only screen and (max-width : 800px)  {
-    .symbol-coin, .changes, col {
+    .symbol-coin, .changes, .crypto-info-table col {
         display: none;
     }
 }

@@ -144,10 +144,48 @@ body {
     background-color: #272230;
     min-height: 270px;
     position: relative;
-    height:50vh; 
+    height:50vh;
     margin: 0 auto;
     border: 1px solid #3C354A;
     border-radius: 15px;
+}
+
+.coin-info-table-block {
+    width: 500px;
+}
+
+.coin-stat_title {
+    margin-bottom: 12px;
+}
+
+.coin-info-table {
+    text-align: center;
+    width: 100%;
+    background-color: #3C354A;
+    color: #BFB7B7;
+    border-radius: 15px;
+}
+
+.stat-table-name-coin {
+    text-align: start;
+    padding: 10px 0 5px 10px;
+}
+
+.stat-table-img-coin {
+    text-align: end;
+    padding: 10px 10px 5px 0;
+}
+
+.coin-info-table td {
+    height: 60px;
+    border-top: 1px solid #272230;
+    vertical-align: middle;
+    border-bottom: 1px solid #272230;
+}
+
+.coin-info-table th {
+    height: 40px;
+    vertical-align: middle;
 }
 
 .analytic-chart {}
@@ -166,8 +204,7 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
-.show-more {
-}
+.show-more {}
 
 .table-btn-container {
     margin: 20px;
@@ -351,7 +388,17 @@ padding: .6em .8em .5em 1.4em;
 
 .market-cap-block {
     max-width: 500px;
+    width: 100%;
 }
+
+.coin-stat-content {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+}
+
+
+
 
 
 

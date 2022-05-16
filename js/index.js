@@ -34,7 +34,7 @@ const cryptoStatSPA = (function() {
         let chart = null;
         let myChart = null;
         let myTimeArr = null;
-        let backgroundColors = ['#743411', '#0c5922', '#bea413', '#668d1c', '#2a778d', '#a9c413', '#9c5935', '#f4359e', '#b91383', '#16d620', '#b77322', '#3b3eac', '#5574a6', '#329262', '#651067', '#8b0707', '#e67300', '#6633cc', '#aaaa11', '#22aa99', '#994499', '#3366cc', '#316395', '#b82e2e', '#66aa00', '#dd4477', '#0099c6', '#990099', '#109618', '#ff9900', '#dc3912', '#3366cc'];
+        let backgroundColors = ['rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', '#b77322', '#3b3eac', '#5574a6', '#329262', '#651067', '#8b0707', '#e67300', '#6633cc', '#aaaa11', '#22aa99', '#994499', '#3366cc', '#316395', '#b82e2e', '#66aa00', '#dd4477', '#0099c6', '#990099', '#109618', '#ff9900', '#dc3912', '#3366cc', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)'];
         const defaultDataSet = [{
             label: 'Choose coins in the checkbox below',
             backgroundColor: 'rgb(255, 99, 132)',
@@ -187,7 +187,7 @@ const cryptoStatSPA = (function() {
                         <tr>
                             <td class="checkbox-table"><input type="checkbox" class="checkbox table-checkbox" id="${mydataTable[i].id}" name="${mydataTable[i].nameCoin}"></td>
                             <td><img class="label-coin" src="${mydataTable[i].image}" alt="label_coin"></td>
-                            <td class="name-coin"><a href="#info" class="link_info">${mydataTable[i].number}. ${mydataTable[i].nameCoin}</a></td>
+                            <td class="name-coin"><a href="#info" data-id="${mydataTable[i].id}" class="link_info">${mydataTable[i].number}. ${mydataTable[i].nameCoin}</a></td>
                             <td class="symbol-coin">${mydataTable[i].symbol}</td>
                             <td class="price-coin">${mydataTable[i].currentPrice}</td>
                             <td class="changes"> ${addArrow(mydataTable[i].changePercentageOneHour)} ${Math.abs(mydataTable[i].changePercentageOneHour)} %</td>
@@ -486,6 +486,60 @@ const cryptoStatSPA = (function() {
 
             this.createPieChartTopMarketCup(myMarketCupArr, mynameCoinsArr, state ? pieChart : barChart);
         };
+
+        this.buildTableForStatisticData = function(dataForTable) {
+            const tableStatisticData = myModuleContainer.querySelector('#coin-stat-table');
+
+            tableStatisticData.innerHTML = `
+                <col width="250"></col>
+                <col width="250"></col>
+                <caption class="coin-stat_title">Statistic prices(${dataForTable.currency.toUpperCase()})</caption>
+                <thead>
+                    <tr>
+                        <th class="stat-table-img-coin"><img class="label-coin" src="${dataForTable.image}" alt="label_coin"></th>
+                        <th class="stat-table-name-coin">${dataForTable.name}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Current price</td>
+                        <td>${dataForTable.currentPrice}</td>
+                    </tr>
+                    <tr>
+                        <td>Change price 24h</td>
+                        <td>${dataForTable.priceChange24h.toFixed(2)}<br />${addArrow(dataForTable.priceChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.priceChange24hPercentage.toFixed(2))}%</td>
+                    </tr>
+                    <tr>
+                        <td>24h min / 24h max</td>
+                        <td>${dataForTable.low24h} / ${dataForTable.high24h}</td>
+                    </tr>
+                    <tr>
+                        <td>Market cap change 24h</td>
+                        <td>${dataForTable.marketCapChange24h.toFixed(2)}<br />${addArrow(dataForTable.marketCapChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.marketCapChange24hPercentage.toFixed(2))}%</td>
+                    </tr>
+                    <tr>
+                        <td>Total volume</td>
+                        <td>${dataForTable.totalVolume}</td>
+                    </tr>
+                    <tr>
+                        <td>Circulating supply</td>
+                        <td>${dataForTable.circulatingSupply}</td>
+                    </tr>
+                    <tr>
+                        <td>Total supply</td>
+                        <td>${dataForTable.totalSupply}</td>
+                    </tr>
+                    <tr>
+                        <td>Max supply</td>
+                        <td>${dataForTable.maxSupply}</td>
+                    </tr>
+                    <tr>
+                        <td>Market cap rank</td>
+                        <td>${dataForTable.marketCapRank}</td>
+                    </tr>
+                </tbody>
+            `;
+        };
     }
 
     function ModuleModel() {
@@ -501,6 +555,9 @@ const cryptoStatSPA = (function() {
         let supportedCurrencies = null;
         let chartCurrency = 'usd';
         const topMarketCup = 10;
+        let gotDataTopMarketCupData = null;
+        let gotStatisticData = null;
+        const defaultCoinId = 'bitcoin';
 
         this.init = function(view) {
             myModuleView = view;
@@ -528,12 +585,29 @@ const cryptoStatSPA = (function() {
                 } else {
                     this.getDataForTable();
                 }
-                
+
                 this.getSuppurtedCurrencies();
             }
 
             if (pageName === routes.info.id) {
-                this.getInfoData();
+
+                if (window.sessionStorage.localDataTableStatistic) {
+                    this.getLocalDataTableStatistic();
+                } else {
+                    if (!gotStatisticData) {
+                        this.getStatisticData();
+                    } else {
+                        if (window.sessionStorage.localDataTableStatistic) {
+                            this.getLocalDataTableStatistic();
+                        }
+                    }
+                }
+
+                if (gotDataTopMarketCupData) {
+                    myModuleView.updateTopMarketChart();
+                } else {
+                    this.getTop10Data();
+                }
             }
         };
 
@@ -751,15 +825,36 @@ const cryptoStatSPA = (function() {
         };
 
         this.clearLocalData = function() {
-            sessionStorage.clear();
+            sessionStorage.removeItem('localData');
+            sessionStorage.removeItem('colorsLine');
+            sessionStorage.removeItem('localChartData');
         };
 
-        //получаем данные для топ 10
-        this.getInfoData = function() {
+        this.getTop10Data = function(currency) {
+            const myCurrency = !currency ? dafaulCurrency : currency;
             // top 10
-            fetch(`${api}/v3/coins/markets?vs_currency=${dafaulCurrency}&order=market_cap_desc&per_page=${topMarketCup}&page=1&sparkline=false`)
+            fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&order=market_cap_desc&per_page=${topMarketCup}&page=1&sparkline=false`)
             .then(response => response.json())
             .then(topMarketCupData => this.parseTopMarketCupData(topMarketCupData));
+        };
+
+        this.setLocalDataTableStatistic = function(currency, id) {
+            const obj = {
+                currency,
+                id
+            };
+            window.sessionStorage.setItem('localDataTableStatistic', JSON.stringify(obj));
+        };
+
+        this.getStatisticData = function(currency, id) {
+            gotStatisticData = true;
+            const myId = !id ? defaultCoinId : id;
+            const myCurrency = !currency ? dafaulCurrency : currency;
+            this.setLocalDataTableStatistic(myCurrency, myId);
+            //for table statistic
+            fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&ids=${myId}&sparkline=false`)
+            .then(response => response.json())
+            .then(data => this.parseStatisticDataForTable(data, myCurrency));
         };
 
         this.parseTopMarketCupData = function(topMarketCupData) {
@@ -771,12 +866,50 @@ const cryptoStatSPA = (function() {
                 nameCoinsArr.push(topMarketCupData[i].name);
             }
 
-            myModuleView.createPieChartTopMarketCup(marketCupArr, nameCoinsArr);
+            if (gotDataTopMarketCupData) {
+                myModuleView.updateTopMarketChart();
+            } else {
+                gotDataTopMarketCupData = true;
+                myModuleView.createPieChartTopMarketCup(marketCupArr, nameCoinsArr);
+            }
+        };
+
+        this.parseStatisticDataForTable = function(data, currency) {
+            const dataObj = data[0];
+
+            const dataForTable = {
+                currency,
+                currentPrice: dataObj.current_price,
+                image: dataObj.image,
+                name: dataObj.name,
+                priceChange24h: dataObj.price_change_24h,
+                priceChange24hPercentage: dataObj.price_change_percentage_24h,
+                high24h: dataObj.high_24h,
+                low24h: dataObj.low_24h,
+                marketCapChange24h: dataObj.market_cap_change_24h,
+                marketCapChange24hPercentage: dataObj.market_cap_change_percentage_24h,
+                lastUpdate: dataObj.last_updated,
+                totalVolume: dataObj.total_volume,
+                circulatingSupply: dataObj.circulating_supply,
+                totalSupply: dataObj.total_supply,
+                maxSupply: dataObj.max_supply,
+                marketCapRank: dataObj.market_cap_rank
+            };
+
+            myModuleView.buildTableForStatisticData(dataForTable);
+        };
+
+        this.getLocalDataTableStatistic = function() {
+            const parseDataCurrency = JSON.parse(window.sessionStorage.localDataTableStatistic).currency;
+            const parseDataId = JSON.parse(window.sessionStorage.localDataTableStatistic).id;
+
+            this.getStatisticData(parseDataCurrency, parseDataId);
         };
 
         this.toggleTopMarketChart = function(state) {
             myModuleView.updateTopMarketChart(state);
         };
+        
     }
 
     function ModuleController() {
@@ -872,7 +1005,7 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.classList.contains('link_info')) {
-                myModuleModel.getInfoData();
+                myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
             }
         };
     }
