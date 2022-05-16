@@ -46,6 +46,12 @@ const cryptoStatSPA = (function() {
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         // const loader = '<div class="loader"></div>';
         const localChartData = {};
+        // pie Char Market Cup
+        let chartTopMarketCup = null;
+        const barChart = 'bar';
+        const pieChart = 'pie';
+        let myMarketCupArr = null;
+        let mynameCoinsArr = null;
 
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -179,9 +185,9 @@ const cryptoStatSPA = (function() {
                 for(let i = startCountCoinsInTable; i < countCoinsInTable; ++i) {
                     dataTableStr += `
                         <tr>
-                            <td class="checkbox-table"><input type="checkbox" class="checkbox" id="${mydataTable[i].id}" name="${mydataTable[i].nameCoin}"></td>
+                            <td class="checkbox-table"><input type="checkbox" class="checkbox table-checkbox" id="${mydataTable[i].id}" name="${mydataTable[i].nameCoin}"></td>
                             <td><img class="label-coin" src="${mydataTable[i].image}" alt="label_coin"></td>
-                            <td class="name-coin">${mydataTable[i].number}. ${mydataTable[i].nameCoin}</td>
+                            <td class="name-coin"><a href="#info" class="link_info">${mydataTable[i].number}. ${mydataTable[i].nameCoin}</a></td>
                             <td class="symbol-coin">${mydataTable[i].symbol}</td>
                             <td class="price-coin">${mydataTable[i].currentPrice}</td>
                             <td class="changes"> ${addArrow(mydataTable[i].changePercentageOneHour)} ${Math.abs(mydataTable[i].changePercentageOneHour)} %</td>
@@ -417,6 +423,69 @@ const cryptoStatSPA = (function() {
         this.clearChart = function() {
             this.removeDataSet();
         };
+
+        this.createPieChartTopMarketCup = function (marketCupArr, nameCoinsArr, typeChart) {
+            myMarketCupArr = marketCupArr;
+            mynameCoinsArr = nameCoinsArr;
+
+            chartTopMarketCup = myModuleContainer.querySelector('#market-cup-chart');
+
+            const data = {
+                labels: mynameCoinsArr,
+                datasets: [{
+                    label: 'Top 10 Market Cup',
+                    data: myMarketCupArr,
+                    backgroundColor:[
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)',
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                    borderWidth: 1,
+                    borderColor: '#777',
+                    hoverBorderWidth: 2,
+                    hoverBorderColor: '#372C44'
+                }],
+            };
+        
+            const config = {
+                type: typeChart ? typeChart : 'bar',
+                data: data,
+                options: {
+                    maintainAspectRatio: false,//респонсивность
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Top 10 Market cap in USD'
+                        }
+                    },
+                }
+            };
+
+            const marketCupChart = new Chart(chartTopMarketCup, config);
+        };
+
+        this.updateTopMarketChart = function(state) {
+            const marketCapChart = myModuleContainer.querySelector('#market-cup-chart');
+            const marketCapChartBlock = myModuleContainer.querySelector('#market-cup-chart-block');
+            let typeChart = null;
+
+            marketCapChart.remove();
+            const newMarketCapChart = document.createElement('canvas');
+            newMarketCapChart.id = 'market-cup-chart';
+            newMarketCapChart.classList.add('market-cup-chart');
+            marketCapChartBlock.append(newMarketCapChart);
+
+            this.createPieChartTopMarketCup(myMarketCupArr, mynameCoinsArr, state ? pieChart : barChart);
+        };
     }
 
     function ModuleModel() {
@@ -431,6 +500,7 @@ const cryptoStatSPA = (function() {
         let dataTable = [];
         let supportedCurrencies = null;
         let chartCurrency = 'usd';
+        const topMarketCup = 10;
 
         this.init = function(view) {
             myModuleView = view;
@@ -460,6 +530,10 @@ const cryptoStatSPA = (function() {
                 }
                 
                 this.getSuppurtedCurrencies();
+            }
+
+            if (pageName === routes.info.id) {
+                this.getInfoData();
             }
         };
 
@@ -679,6 +753,30 @@ const cryptoStatSPA = (function() {
         this.clearLocalData = function() {
             sessionStorage.clear();
         };
+
+        //получаем данные для топ 10
+        this.getInfoData = function() {
+            // top 10
+            fetch(`${api}/v3/coins/markets?vs_currency=${dafaulCurrency}&order=market_cap_desc&per_page=${topMarketCup}&page=1&sparkline=false`)
+            .then(response => response.json())
+            .then(topMarketCupData => this.parseTopMarketCupData(topMarketCupData));
+        };
+
+        this.parseTopMarketCupData = function(topMarketCupData) {
+            const marketCupArr = [];
+            const nameCoinsArr = [];
+
+            for (let i = 0; i < topMarketCupData.length; ++i) {
+                marketCupArr.push(topMarketCupData[i].market_cap);
+                nameCoinsArr.push(topMarketCupData[i].name);
+            }
+
+            myModuleView.createPieChartTopMarketCup(marketCupArr, nameCoinsArr);
+        };
+
+        this.toggleTopMarketChart = function(state) {
+            myModuleView.updateTopMarketChart(state);
+        };
     }
 
     function ModuleController() {
@@ -713,7 +811,7 @@ const cryptoStatSPA = (function() {
                 myModuleModel.setLocalData(checkedId, event.target.value);
             }
 
-            if (event.target.type === 'checkbox') {
+            if (event.target.classList.contains('table-checkbox')) {
                 if (event.target.checked) {
                     checkedId.push(event.target.id);
                     checkedNameCoin.push(event.target.name);
@@ -741,6 +839,10 @@ const cryptoStatSPA = (function() {
 
                 myModuleModel.clearChart();
             }
+
+            if (event.target.id === 'switch-chart') {
+                myModuleModel.toggleTopMarketChart(event.target.checked);
+            }
         };
 
         this.updateState = function() {
@@ -767,6 +869,10 @@ const cryptoStatSPA = (function() {
 
             if (event.target.id === 'clear-btn') {
                 myModuleModel.clearChart();
+            }
+
+            if (event.target.classList.contains('link_info')) {
+                myModuleModel.getInfoData();
             }
         };
     }
