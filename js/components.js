@@ -3,9 +3,10 @@ const Header = {
       return `
         <header id="header" class="header ${customClass}">
             <h1 class="title"></h1>
-            <a href="#login" id="login" class="login">
-                <img src="./img/login.svg" alt="login">
-            </a>
+            <div class="login-btn-container">
+                <a id="show-form-singUp-btn" class="show-form-singUp-btn show-form-btn">Sing Up</a>
+                <a id="show-form-login-btn" class="show-form-login-btn show-form-btn">Login</a>
+            </div>
         </header>
       `;
     }

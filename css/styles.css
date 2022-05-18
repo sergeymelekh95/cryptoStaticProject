@@ -314,16 +314,6 @@ background-position: left .7em top 50%, 0 0;
 padding: .6em .8em .5em 1.4em; 
 }
 
-.login {
-    position: absolute;
-    top: 21px;
-    right: 42px;
-}
-
-.login img {
-    transform: rotate(180deg);
-}
-
 .footer {
     border: 2px solid #261E35;
     text-align: center;
@@ -449,10 +439,172 @@ padding: .6em .8em .5em 1.4em;
     margin: 0 0 30px 0;
 }
 
-.coin-info-table-block, .chart-statistics-block {
-    /* width: 100%; */
-    /* min-width: 0; */
+.coin-info-table-block, .chart-statistics-block {}
+
+.login-btn-container {
+    position: absolute;
+    top: 21px;
+    right: 42px;
 }
+
+.show-form-singUp-btn {}
+
+.show-form-login-btn {
+    margin: 0 0 0 10px;
+}
+
+.show-form-btn {
+    border: none;
+    cursor: pointer;
+}
+
+.show-form-btn:hover {
+    color: rgb(172, 172, 172);
+}
+
+/* form=============================================== */
+
+.form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.form {
+    padding: 80px 20px 20px 20px;
+    position: relative;
+    background-color: #3f3f3f;
+    width: 500px;
+    height: 415px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+}
+
+.form label {
+    font-size: 1.2rem;
+}
+
+.email {
+    margin: 0 0 20px 0;
+}
+
+.form input {
+    background-color: transparent;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid rgb(119, 119, 119);
+    outline: none;
+    color: rgb(255, 255, 255);
+    font-size: 1.2rem;
+    padding: 0 10px;
+}
+
+.form input:focus {
+    border: 1px solid rgb(194, 194, 194);
+}
+
+.form-title {
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+}
+
+.close-form-btn {
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.close-form-btn:hover {
+    opacity: 1;
+}
+
+.close-form-btn:before, .close-form-btn:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 33px;
+    width: 2px;
+    background-color: rgb(255, 255, 255);
+}
+
+.close-form-btn:before {
+    transform: rotate(45deg);
+}
+
+.close-form-btn:after {
+    transform: rotate(-45deg);
+}
+
+.password-form + div {
+    text-align: center;
+    margin: 10px 0 50px 0;
+}
+
+.password-form + div p {
+    color: rgb(177, 177, 177);
+}
+
+.login-form-link {
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.login-form-link:hover {
+    text-decoration: underline;
+}
+
+.form-btn {
+    cursor: pointer;
+    height: 50px;
+    background-color: #896da5;
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 1.2rem;
+}
+
+.form-btn:hover {
+    background-color: #78569b;
+}
+
+.form-btn:disabled {
+    background-color: #b19fc3;
+}
+
+.form_closed {
+    display: none;
+}
+
+.form-content {
+}
+
+.form-singIn {
+
+
+}
+
+
+
+
+
+
+
+
+
+
+/* form=============================================== */
 
 
 

@@ -548,7 +548,6 @@ const cryptoStatSPA = (function() {
         this.createChartChangeMarketCap = function(marketCapsObj, currency, id, myTypeChart) {
 
             if (!createdChartChanges) {
-
                 let nameChart = defaultNameChart;
 
                 if (myTypeChart === 'market-cap') {
@@ -622,6 +621,28 @@ const cryptoStatSPA = (function() {
             parent.append(canvas);
 
             this.createChartChangeMarketCap(marketCapsObj, currency, id, myTypeChart);
+        };
+
+        this.toggleSingUpForm = function() {
+            const formOverlay = myModuleContainer.querySelector('#form-overlay-singUp');
+            formOverlay.classList.toggle('form_closed');
+            
+            this.toggleScroll(window.getComputedStyle(formOverlay).display);
+        };
+
+        this.toggleLoginForm = function() {
+            const formOverlay = myModuleContainer.querySelector('#form-overlay-login');
+            formOverlay.classList.toggle('form_closed');
+
+            this.toggleScroll(window.getComputedStyle(formOverlay).display);
+        };
+
+        this.toggleScroll = function(style) {
+            if (style === 'block') {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
         };
     }
 
@@ -1049,6 +1070,14 @@ const cryptoStatSPA = (function() {
         this.toggleTopMarketChart = function(state) {
             myModuleView.updateTopMarketChart(state);
         };
+
+        this.toggleSingUpForm = function() {
+            myModuleView.toggleSingUpForm();
+        };
+
+        this.toggleLoginForm = function() {
+            myModuleView.toggleLoginForm();
+        };
         
     }
 
@@ -1076,9 +1105,7 @@ const cryptoStatSPA = (function() {
             periodSelect = myModuleContainer.querySelector('#period');
 
             myModuleContainer.addEventListener('change', this.getValue);
-            myModuleContainer.addEventListener('click', this.updateCoin);
-
-            // selectTypesChartsValue = myModuleContainer.querySelector('#type-statistic').value;
+            myModuleContainer.addEventListener('click', this.handleClick);
         };
 
         this.getValue = function(event) {
@@ -1138,7 +1165,7 @@ const cryptoStatSPA = (function() {
             }
         };
 
-        this.updateCoin = function(event) {
+        this.handleClick = function(event) {
             if (event.target.id === 'next-btn') {
                 myModuleModel.showNextCoins();
             }
@@ -1153,6 +1180,32 @@ const cryptoStatSPA = (function() {
 
             if (event.target.classList.contains('link_info')) {
                 myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
+            }
+
+            if (event.target.id === 'close-form-singUp-btn') {
+                myModuleModel.toggleSingUpForm();
+            }
+
+            if (event.target.id === 'show-form-singUp-btn') {
+                myModuleModel.toggleSingUpForm();
+            }
+
+            if (event.target.id === 'show-form-login-btn') {
+                myModuleModel.toggleLoginForm();
+            }
+
+            if (event.target.id === 'close-form-login-btn') {
+                myModuleModel.toggleLoginForm();
+            }
+
+            if (event.target.id === 'change-login-form-btn') {
+                myModuleModel.toggleSingUpForm();
+                myModuleModel.toggleLoginForm();
+            }
+
+            if (event.target.id === 'change-singUp-form-btn') {
+                myModuleModel.toggleLoginForm();
+                myModuleModel.toggleSingUpForm();
             }
         };
     }

@@ -1,12 +1,4 @@
-@media only screen and (max-width : 1024px) {
-    /* .coin-stat-content {
-        flex-wrap: wrap-reverse;
-    } */
-
-    /* .coin-info-table-block {
-        min-height: 600px;
-    } */
-}
+@media only screen and (max-width : 1024px) {}
 
 @media only screen and (max-width : 900px)  { 
     .coin-stat-content-row {
@@ -37,6 +29,14 @@
 
     .content, .header {
         margin-left: 83px;
+    }
+
+    .coin-info-table {
+        width: 100%;
+    }
+
+    .form {
+        width: 80%;
     }
 }
 
