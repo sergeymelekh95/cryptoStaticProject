@@ -52,6 +52,7 @@ const cryptoStatSPA = (function() {
         const pieChart = 'pie';
         let myMarketCupArr = null;
         let mynameCoinsArr = null;
+        const myTension = 0.5;
 
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -260,12 +261,13 @@ const cryptoStatSPA = (function() {
         };
 
         class DataSet {
-            constructor(data, nameCoin, color, id) {
+            constructor(data, nameCoin, color, id, tension) {
                 this.label = nameCoin;
                 this.backgroundColor = color;
                 this.borderColor = color;
                 this.data = data;
                 this.id = id;
+                this.tension = tension;
             }
         }
 
@@ -273,7 +275,7 @@ const cryptoStatSPA = (function() {
             myTimeArr = timeArr;
             const nameCoin = checkedNameCoinArr[checkedNameCoinArr.length - 1];
 
-            dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[backgroundColors.length - 1], idArr[idArr.length - 1]));
+            dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[backgroundColors.length - 1], idArr[idArr.length - 1], myTension));
             //удаляю последний(выбранный) цвет для того что бы его потороно не ипосльзовать
             backgroundColors.pop();
             //обновляем каждый клик
@@ -503,42 +505,189 @@ const cryptoStatSPA = (function() {
                 <tbody>
                     <tr>
                         <td>Current price</td>
-                        <td>${dataForTable.currentPrice}</td>
+                        <td class="table-value">${dataForTable.currentPrice}</td>
                     </tr>
                     <tr>
                         <td>Change price 24h</td>
-                        <td>${dataForTable.priceChange24h.toFixed(2)}<br />${addArrow(dataForTable.priceChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.priceChange24hPercentage.toFixed(2))}%</td>
+                        <td class="table-value">${dataForTable.priceChange24h.toFixed(2)}<br />${addArrow(dataForTable.priceChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.priceChange24hPercentage.toFixed(2))}%</td>
                     </tr>
                     <tr>
                         <td>24h min / 24h max</td>
-                        <td>${dataForTable.low24h} / ${dataForTable.high24h}</td>
+                        <td class="table-value">${dataForTable.low24h} / ${dataForTable.high24h}</td>
                     </tr>
                     <tr>
                         <td>Market cap change 24h</td>
-                        <td>${dataForTable.marketCapChange24h.toFixed(2)}<br />${addArrow(dataForTable.marketCapChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.marketCapChange24hPercentage.toFixed(2))}%</td>
+                        <td class="table-value">${dataForTable.marketCapChange24h.toFixed(2)}<br />${addArrow(dataForTable.marketCapChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.marketCapChange24hPercentage.toFixed(2))}%</td>
                     </tr>
                     <tr>
                         <td>Total volume</td>
-                        <td>${dataForTable.totalVolume}</td>
+                        <td class="table-value">${dataForTable.totalVolume}</td>
                     </tr>
                     <tr>
                         <td>Circulating supply</td>
-                        <td>${dataForTable.circulatingSupply}</td>
+                        <td class="table-value">${dataForTable.circulatingSupply}</td>
                     </tr>
                     <tr>
                         <td>Total supply</td>
-                        <td>${dataForTable.totalSupply}</td>
+                        <td class="table-value">${dataForTable.totalSupply}</td>
                     </tr>
                     <tr>
                         <td>Max supply</td>
-                        <td>${dataForTable.maxSupply}</td>
+                        <td class="table-value">${dataForTable.maxSupply}</td>
                     </tr>
                     <tr>
                         <td>Market cap rank</td>
-                        <td>${dataForTable.marketCapRank}</td>
+                        <td class="table-value">${dataForTable.marketCapRank}</td>
                     </tr>
                 </tbody>
             `;
+        };
+
+        this.createChartChangeMarketCap = function(marketCapsObj, currency, id) {
+            const chartMarketCups = myModuleContainer.querySelector('#change-market-cup-chart');
+
+            const labels = marketCapsObj.timeArr;
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: `${id} change market cap`,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 0.6)',
+                    data: marketCapsObj.valueArr,
+                    tension: 0.5
+                }]
+            };
+        
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `History change ${id} market cap ${marketCapsObj.timeArr[0]} - ${marketCapsObj.timeArr[marketCapsObj.timeArr.length - 1]}`
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: `Current in ${currency}`
+                            },
+                        }
+                    }
+                }
+            };
+
+            myChart = new Chart(
+                chartMarketCups,
+                config
+            );
+        };
+
+        this.createChartChangePrices = function(pricesObj, currency, id) {
+            const createChartChangePrices = myModuleContainer.querySelector('#change-prices-chart');
+
+            const labels = pricesObj.timeArr;
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: `${id} change prices`,
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                    borderColor: 'rgba(255, 206, 86, 0.6)',
+                    data: pricesObj.valueArr,
+                    tension: 0.5
+                }]
+            };
+        
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `History change ${id} prices ${pricesObj.timeArr[0]} - ${pricesObj.timeArr[pricesObj.timeArr.length - 1]}`
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: `Current in ${currency}`
+                            },
+                        }
+                    }
+                }
+            };
+
+            myChart = new Chart(
+                createChartChangePrices,
+                config
+            );
+        };
+
+        this.createChartChangeVolume = function(totalVolumeObj, currency, id) {
+            const chartChangeVolume = myModuleContainer.querySelector('#change-total-volume-chart');
+
+            const labels = totalVolumeObj.timeArr;
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: `${id} change volume`,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 0.6)',
+                    data: totalVolumeObj.valueArr,
+                    tension: 0.5
+                }]
+            };
+        
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `History change ${id} total volume ${totalVolumeObj.timeArr[0]} - ${totalVolumeObj.timeArr[totalVolumeObj.timeArr.length - 1]}`
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: `Current in ${currency}`
+                            },
+                        }
+                    }
+                }
+            };
+
+            myChart = new Chart(
+                chartChangeVolume,
+                config
+            );
         };
     }
 
@@ -590,9 +739,10 @@ const cryptoStatSPA = (function() {
             }
 
             if (pageName === routes.info.id) {
-
                 if (window.sessionStorage.localDataTableStatistic) {
-                    this.getLocalDataTableStatistic();
+                    if (!gotStatisticData) {
+                        this.getLocalDataTableStatistic();
+                    }
                 } else {
                     if (!gotStatisticData) {
                         this.getStatisticData();
@@ -851,10 +1001,47 @@ const cryptoStatSPA = (function() {
             const myId = !id ? defaultCoinId : id;
             const myCurrency = !currency ? dafaulCurrency : currency;
             this.setLocalDataTableStatistic(myCurrency, myId);
+
             //for table statistic
             fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&ids=${myId}&sparkline=false`)
             .then(response => response.json())
             .then(data => this.parseStatisticDataForTable(data, myCurrency));
+
+            //for 3 charts
+            fetch(`${api}/v3/coins/${myId}/market_chart?vs_currency=${myCurrency}&days=max&interval=daily`)
+            .then(response => response.json())
+            .then(data => this.parseHistoricalDataForCharts(data, currency, id));
+        };
+
+        this.parseHistoricalDataForCharts = function(data, currency, id) {
+            const myId = !id ? defaultCoinId : id;
+            const myCurrency = !currency ? dafaulCurrency : currency;
+            const marketCapsArr = data.market_caps;
+            const pricesArr = data.prices;
+            const totalVolumes = data.total_volumes;
+
+            const createArraysForCharts = arr => {
+                const timeArr = [];
+                const valueArr = [];
+                const addZero = num => num < 10 ? `0${num}` : num;
+
+                for (let i = 0; i < arr.length; ++i) {
+                    if (i % 200 === 0) {
+                        timeArr.push(`${addZero(new Date(arr[i][0]).getDate())}.${addZero(new Date(arr[i][0]).getMonth() + 1)}.${addZero(new Date(arr[i][0]).getFullYear())}`);
+                        valueArr.push(arr[i][1]);
+                    }
+                }
+
+                return {timeArr, valueArr};
+            };
+
+            myModuleView.createChartChangeMarketCap(createArraysForCharts(marketCapsArr), myCurrency, myId);
+            myModuleView.createChartChangePrices(createArraysForCharts(pricesArr), myCurrency, myId);
+            myModuleView.createChartChangeVolume(createArraysForCharts(totalVolumes), myCurrency, myId);
+
+            // console.log(createArraysForCharts(marketCapsArr));
+            // console.log(createArraysForCharts(pricesArr));
+            // console.log(createArraysForCharts(totalVolumes));
         };
 
         this.parseTopMarketCupData = function(topMarketCupData) {
@@ -896,6 +1083,7 @@ const cryptoStatSPA = (function() {
                 marketCapRank: dataObj.market_cap_rank
             };
 
+            gotStatisticData = false;
             myModuleView.buildTableForStatisticData(dataForTable);
         };
 

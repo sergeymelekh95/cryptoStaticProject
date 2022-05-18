@@ -43,20 +43,35 @@ const CoinInfo = {
         return `
         <section class="${className}">
             <div class="coin-stat-content">
-                <div class="market-cap-block">
-                    <div class="switch-block">
-                        <span>Switch chart</span>
-                        <label class="switch">
-                            <input type="checkbox" id="switch-chart">
-                            <span class="slider round"></span>
-                        </label>
+
+                <div class="coin-stat-content-row">
+                    <div class="market-cap-block">
+                        <div class="switch-block">
+                            <span>Switch chart</span>
+                            <label class="switch">
+                                <input type="checkbox" id="switch-chart">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div id="market-cup-chart-block" class="chart-statistics-block market-cup-chart-block">
+                            <canvas id="market-cup-chart" class="market-cup-chart"></canvas>
+                        </div>
                     </div>
-                    <div id="market-cup-chart-block" class="chart-block market-cup-chart-block">
-                        <canvas id="market-cup-chart" class="market-cup-chart"></canvas>
+
+                    <div class="coin-info-table-block">
+                        <table id="coin-stat-table" class="coin-info-table"></table>
                     </div>
                 </div>
-                <div class="coin-info-table-block">
-                    <table id="coin-stat-table" class="coin-info-table"></table>
+
+                <div class="chart-statistics-block change-market-cup-chart-block">
+                    <canvas id="change-market-cup-chart" class="change-market-cup-chart"></canvas>
+                </div>
+
+                <div class="change-prices-chart-block chart-statistics-block">
+                    <canvas id="change-prices-chart" class="change-prices-chart"></canvas>
+                </div>
+                <div class="change-total-volume-chart-block chart-statistics-block">
+                    <canvas id="change-total-volume-chart" class="change-total-volume-chart"></canvas>
                 </div>
             </div>
         </section>

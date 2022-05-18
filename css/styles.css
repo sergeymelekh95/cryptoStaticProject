@@ -150,8 +150,17 @@ body {
     border-radius: 15px;
 }
 
+.chart-statistics-block {
+    background-color: #272230;
+    min-height: 400px;
+    /* position: relative; */
+    /* height:50vh; */
+    /* margin: 0 auto; */
+    border: 1px solid #3C354A;
+    border-radius: 15px;
+}
+
 .coin-info-table-block {
-    width: 500px;
 }
 
 .coin-stat_title {
@@ -159,8 +168,8 @@ body {
 }
 
 .coin-info-table {
+    width: 350px;
     text-align: center;
-    width: 100%;
     background-color: #3C354A;
     color: #BFB7B7;
     border-radius: 15px;
@@ -177,15 +186,22 @@ body {
 }
 
 .coin-info-table td {
-    height: 60px;
+    padding: 0 10px;
+    text-align: start;
+    height: 45px;
     border-top: 1px solid #272230;
     vertical-align: middle;
     border-bottom: 1px solid #272230;
 }
 
 .coin-info-table th {
-    height: 40px;
+    height: 30px;
     vertical-align: middle;
+}
+
+.coin-info-table .table-value {
+    padding: 0 10px;
+    text-align: end;
 }
 
 .analytic-chart {}
@@ -387,18 +403,51 @@ padding: .6em .8em .5em 1.4em;
   }
 
 .market-cap-block {
-    max-width: 500px;
-    width: 100%;
+    /* max-width: 500px;
+    width: 100%; */
+    min-width: 0;
+    flex: 1;
 }
 
 .coin-stat-content {
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    gap: 60px;
+    gap: 60px; */
 }
 
+.market-cup-chart {
+    height: 467px;
+}
 
+.change-market-cup-chart {
+    /* max-width: 100%; */
+}
 
+.change-prices-chart-block {
+    /* max-width: 700px; */
+}
+
+.change-total-volume-chart-block {
+    /* max-width: 700px; */
+}
+
+.change-market-cup-chart-block {
+    /* max-width: 700px; */
+    /* min-width: 0;
+    flex: 1; */
+}
+
+.coin-stat-content-row {
+    width: 100%;
+    display: flex;
+    gap: 40px;
+    margin: 0 0 30px 0;
+}
+
+.coin-info-table-block, .chart-statistics-block {
+    /* width: 100%; */
+    /* min-width: 0; */
+}
 
 
 
