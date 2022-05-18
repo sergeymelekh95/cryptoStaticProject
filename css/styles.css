@@ -437,6 +437,11 @@ padding: .6em .8em .5em 1.4em;
     flex: 1; */
 }
 
+.type-statistic-block {
+    text-align: end;
+    margin: 0 0 15px 0;
+}
+
 .coin-stat-content-row {
     width: 100%;
     display: flex;
@@ -448,6 +453,8 @@ padding: .6em .8em .5em 1.4em;
     /* width: 100%; */
     /* min-width: 0; */
 }
+
+
 
 
 

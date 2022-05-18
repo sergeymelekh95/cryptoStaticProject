@@ -43,7 +43,6 @@ const CoinInfo = {
         return `
         <section class="${className}">
             <div class="coin-stat-content">
-
                 <div class="coin-stat-content-row">
                     <div class="market-cap-block">
                         <div class="switch-block">
@@ -57,21 +56,21 @@ const CoinInfo = {
                             <canvas id="market-cup-chart" class="market-cup-chart"></canvas>
                         </div>
                     </div>
-
                     <div class="coin-info-table-block">
                         <table id="coin-stat-table" class="coin-info-table"></table>
                     </div>
                 </div>
-
-                <div class="chart-statistics-block change-market-cup-chart-block">
-                    <canvas id="change-market-cup-chart" class="change-market-cup-chart"></canvas>
-                </div>
-
-                <div class="change-prices-chart-block chart-statistics-block">
-                    <canvas id="change-prices-chart" class="change-prices-chart"></canvas>
-                </div>
-                <div class="change-total-volume-chart-block chart-statistics-block">
-                    <canvas id="change-total-volume-chart" class="change-total-volume-chart"></canvas>
+                <div class="coin-stat-content-row-2">
+                    <div class="type-statistic-block">
+                        <select name="type-statistic" id="type-statistic" class="type-statistic select">
+                            <option value="market-cap">Market cap</option>
+                            <option value="prices">Prices</option>
+                            <option value="total-volume">Volume</option>
+                        </select>
+                    </div>
+                    <div id="chart-statistics-block" class="chart-statistics-block change-market-cup-chart-block">
+                        <canvas id="change-market-cup-chart" class="change-market-cup-chart"></canvas>
+                    </div>
                 </div>
             </div>
         </section>

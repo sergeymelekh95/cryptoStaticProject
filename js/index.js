@@ -53,6 +53,8 @@ const cryptoStatSPA = (function() {
         let myMarketCupArr = null;
         let mynameCoinsArr = null;
         const myTension = 0.5;
+        const defaultNameChart = 'market cap';
+        let createdChartChanges = false;
 
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -543,151 +545,83 @@ const cryptoStatSPA = (function() {
             `;
         };
 
-        this.createChartChangeMarketCap = function(marketCapsObj, currency, id) {
-            const chartMarketCups = myModuleContainer.querySelector('#change-market-cup-chart');
+        this.createChartChangeMarketCap = function(marketCapsObj, currency, id, myTypeChart) {
 
-            const labels = marketCapsObj.timeArr;
-            const data = {
-                labels: labels,
-                datasets: [{
-                    label: `${id} change market cap`,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 0.6)',
-                    data: marketCapsObj.valueArr,
-                    tension: 0.5
-                }]
-            };
-        
-            const config = {
-                type: 'line',
-                data: data,
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: `History change ${id} market cap ${marketCapsObj.timeArr[0]} - ${marketCapsObj.timeArr[marketCapsObj.timeArr.length - 1]}`
-                        },
-                    },
-                    scales: {
-                        x: {
+            if (!createdChartChanges) {
+
+                let nameChart = defaultNameChart;
+
+                if (myTypeChart === 'market-cap') {
+                    nameChart = 'market cap';
+                } else if (myTypeChart === 'prices') {
+                    nameChart = 'prices';
+                } else {
+                    nameChart = 'volume';
+                }
+
+                const chartMarketCups = myModuleContainer.querySelector('#change-market-cup-chart');
+                const labels = marketCapsObj.timeArr;
+                const data = {
+                    labels: labels,
+                    datasets: [{
+                        label: `${id} change ${nameChart}`,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 0.6)',
+                        data: marketCapsObj.valueArr,
+                        tension: 0.5
+                    }]
+                };
+            
+                const config = {
+                    type: 'line',
+                    data: data,
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
                             title: {
                                 display: true,
-                                text: 'Time'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: `Current in ${currency}`
+                                text: `History change ${id} ${nameChart} ${marketCapsObj.timeArr[0]} - ${marketCapsObj.timeArr[marketCapsObj.timeArr.length - 1]}`
                             },
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Time'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: `Current in ${currency}`
+                                },
+                            }
                         }
                     }
-                }
-            };
+                };
+    
+                myChart = new Chart(
+                    chartMarketCups,
+                    config
+                );
 
-            myChart = new Chart(
-                chartMarketCups,
-                config
-            );
+                createdChartChanges = true;
+            } else {
+                this.updatecreateChartsChanges(marketCapsObj, currency, id, myTypeChart);
+            }
+
         };
 
-        this.createChartChangePrices = function(pricesObj, currency, id) {
-            const createChartChangePrices = myModuleContainer.querySelector('#change-prices-chart');
+        this.updatecreateChartsChanges = function (marketCapsObj, currency, id, myTypeChart) {
+            createdChartChanges = false;
+            myModuleContainer.querySelector('#change-market-cup-chart').remove();
+            const canvas = document.createElement('canvas');
+            canvas.id = 'change-market-cup-chart';
+            canvas.classList.add('change-market-cup-chart');
+            const parent = myModuleContainer.querySelector('#chart-statistics-block');
+            parent.append(canvas);
 
-            const labels = pricesObj.timeArr;
-            const data = {
-                labels: labels,
-                datasets: [{
-                    label: `${id} change prices`,
-                    backgroundColor: 'rgba(255, 206, 86, 0.6)',
-                    borderColor: 'rgba(255, 206, 86, 0.6)',
-                    data: pricesObj.valueArr,
-                    tension: 0.5
-                }]
-            };
-        
-            const config = {
-                type: 'line',
-                data: data,
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: `History change ${id} prices ${pricesObj.timeArr[0]} - ${pricesObj.timeArr[pricesObj.timeArr.length - 1]}`
-                        },
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Time'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: `Current in ${currency}`
-                            },
-                        }
-                    }
-                }
-            };
-
-            myChart = new Chart(
-                createChartChangePrices,
-                config
-            );
-        };
-
-        this.createChartChangeVolume = function(totalVolumeObj, currency, id) {
-            const chartChangeVolume = myModuleContainer.querySelector('#change-total-volume-chart');
-
-            const labels = totalVolumeObj.timeArr;
-            const data = {
-                labels: labels,
-                datasets: [{
-                    label: `${id} change volume`,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 0.6)',
-                    data: totalVolumeObj.valueArr,
-                    tension: 0.5
-                }]
-            };
-        
-            const config = {
-                type: 'line',
-                data: data,
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: `History change ${id} total volume ${totalVolumeObj.timeArr[0]} - ${totalVolumeObj.timeArr[totalVolumeObj.timeArr.length - 1]}`
-                        },
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Time'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: `Current in ${currency}`
-                            },
-                        }
-                    }
-                }
-            };
-
-            myChart = new Chart(
-                chartChangeVolume,
-                config
-            );
+            this.createChartChangeMarketCap(marketCapsObj, currency, id, myTypeChart);
         };
     }
 
@@ -707,6 +641,12 @@ const cryptoStatSPA = (function() {
         let gotDataTopMarketCupData = null;
         let gotStatisticData = null;
         const defaultCoinId = 'bitcoin';
+        const defaultTypeChart = 'market-cap';
+
+
+        let myId = null;
+        let myCurrency = null;
+        let myTypeChart = null;
 
         this.init = function(view) {
             myModuleView = view;
@@ -988,19 +928,22 @@ const cryptoStatSPA = (function() {
             .then(topMarketCupData => this.parseTopMarketCupData(topMarketCupData));
         };
 
-        this.setLocalDataTableStatistic = function(currency, id) {
+        this.setLocalDataTableStatistic = function(currency, id, typeChart) {
             const obj = {
                 currency,
-                id
+                id,
+                typeChart
             };
             window.sessionStorage.setItem('localDataTableStatistic', JSON.stringify(obj));
         };
 
-        this.getStatisticData = function(currency, id) {
+        this.getStatisticData = function(currency, id, typeChart) {
             gotStatisticData = true;
-            const myId = !id ? defaultCoinId : id;
-            const myCurrency = !currency ? dafaulCurrency : currency;
-            this.setLocalDataTableStatistic(myCurrency, myId);
+            myId = !id ? defaultCoinId : id;
+            myCurrency = !currency ? dafaulCurrency : currency;
+            myTypeChart = !typeChart ? defaultTypeChart : typeChart;
+
+            this.setLocalDataTableStatistic(myCurrency, myId, myTypeChart);
 
             //for table statistic
             fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&ids=${myId}&sparkline=false`)
@@ -1010,12 +953,17 @@ const cryptoStatSPA = (function() {
             //for 3 charts
             fetch(`${api}/v3/coins/${myId}/market_chart?vs_currency=${myCurrency}&days=max&interval=daily`)
             .then(response => response.json())
-            .then(data => this.parseHistoricalDataForCharts(data, currency, id));
+            .then(data => this.parseHistoricalDataForCharts(data, currency, id, myTypeChart));
         };
 
-        this.parseHistoricalDataForCharts = function(data, currency, id) {
-            const myId = !id ? defaultCoinId : id;
-            const myCurrency = !currency ? dafaulCurrency : currency;
+        this.updateTypeChart = function(typeChart) {
+            this.getStatisticData(myCurrency, myId, typeChart);
+        };
+
+        this.parseHistoricalDataForCharts = function(data, currency, id, myTypeChart) {
+            myId = !id ? defaultCoinId : id;
+            myCurrency = !currency ? dafaulCurrency : currency;
+
             const marketCapsArr = data.market_caps;
             const pricesArr = data.prices;
             const totalVolumes = data.total_volumes;
@@ -1035,9 +983,13 @@ const cryptoStatSPA = (function() {
                 return {timeArr, valueArr};
             };
 
-            myModuleView.createChartChangeMarketCap(createArraysForCharts(marketCapsArr), myCurrency, myId);
-            myModuleView.createChartChangePrices(createArraysForCharts(pricesArr), myCurrency, myId);
-            myModuleView.createChartChangeVolume(createArraysForCharts(totalVolumes), myCurrency, myId);
+            if (myTypeChart === 'market-cap') {
+                myModuleView.createChartChangeMarketCap(createArraysForCharts(marketCapsArr), myCurrency, myId, myTypeChart);
+            } else if (myTypeChart === 'prices') {
+                myModuleView.createChartChangeMarketCap(createArraysForCharts(pricesArr), myCurrency, myId, myTypeChart);
+            } else {
+                myModuleView.createChartChangeMarketCap(createArraysForCharts(totalVolumes), myCurrency, myId, myTypeChart);
+            }
 
             // console.log(createArraysForCharts(marketCapsArr));
             // console.log(createArraysForCharts(pricesArr));
@@ -1109,6 +1061,7 @@ const cryptoStatSPA = (function() {
         let currencySelectValue = null;
         let periodSelect = null;
         let selectPeriodValue = null;
+        let selectTypesChartsValue = null;
 
         this.init = function(container, model) {
             myModuleContainer = container;
@@ -1124,6 +1077,8 @@ const cryptoStatSPA = (function() {
 
             myModuleContainer.addEventListener('change', this.getValue);
             myModuleContainer.addEventListener('click', this.updateCoin);
+
+            // selectTypesChartsValue = myModuleContainer.querySelector('#type-statistic').value;
         };
 
         this.getValue = function(event) {
@@ -1163,6 +1118,10 @@ const cryptoStatSPA = (function() {
 
             if (event.target.id === 'switch-chart') {
                 myModuleModel.toggleTopMarketChart(event.target.checked);
+            }
+
+            if (event.target.id === 'type-statistic') {
+                myModuleModel.updateTypeChart(event.target.value);
             }
         };
 
