@@ -1,7 +1,7 @@
 const HomePage = {
     id: "main",
     title: "Dashboard Coins Overview",
-    render: (className = "container", ...rest) => {
+    render: (className = "container") => {
         return `
         <section class="${className}" id="chart-section">
             <div class="period-block">
@@ -39,7 +39,7 @@ const HomePage = {
 const CoinInfo = {
     id: "info",
     title: "Coin info",
-    render: (className = "container", ...rest) => {
+    render: (className = "container") => {
         return `
         <section class="${className}">
             <div class="coin-stat-content">
@@ -81,7 +81,7 @@ const CoinInfo = {
 const AboutPage = {
     id: "about",
     title: "About",
-    render: (className = "container", ...rest) => {
+    render: (className = "container") => {
         return `
         <section class="${className}">
             <p>About Content</p>
@@ -93,7 +93,7 @@ const AboutPage = {
 const ErrorPage = {
     id: "error",
     title: "Error 404 - page not found...",
-    render: (className = "container", ...rest) => {
+    render: (className = "container") => {
         return `
         <section class="${className}">
             <p>Error 404, page not found, try to go

@@ -164,6 +164,7 @@ body {
 }
 
 .coin-info-table-block {
+    height: 466px;
 }
 
 .coin-stat_title {
@@ -491,6 +492,10 @@ padding: .6em .8em .5em 1.4em;
     flex-direction: column;
 }
 
+.form-singUp {
+    height: 491px;
+}
+
 .form label {
     font-size: 1.2rem;
 }
@@ -508,6 +513,10 @@ padding: .6em .8em .5em 1.4em;
     color: rgb(255, 255, 255);
     font-size: 1.2rem;
     padding: 0 10px;
+}
+
+.userName-input {
+    margin-bottom: 32px;
 }
 
 .form input:focus {
@@ -550,13 +559,22 @@ padding: .6em .8em .5em 1.4em;
     transform: rotate(-45deg);
 }
 
-.password-form + div {
+.invalid-message + p {
     text-align: center;
     margin: 10px 0 50px 0;
 }
 
 .password-form + div p {
     color: rgb(177, 177, 177);
+}
+
+.password-form + div .invalid-message {
+    color: #ef7070;
+}
+
+.invalid-message {
+    margin-top: 5px;
+    height: 15px;
 }
 
 .login-form-link {

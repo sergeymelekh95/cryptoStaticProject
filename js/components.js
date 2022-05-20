@@ -6,10 +6,12 @@ const Header = {
             <div class="login-btn-container">
                 <p id="userEmail" class="userEmail"></p>
             </div>
-
             <div id="form-overlay-singUp" class="form-overlay form_closed">
                 <form action="#" id="form-singUp" class="form form-singUp">
                     <p class="form-title">Sing Up</p>
+                    <label for="userName-input">Name</label>
+                    <br />
+                    <input type="text" name="name-singUp" class="userName-input" id="userName-input">
                     <label for="email-singUp">Email</label>
                     <br />
                     <input type="email" name="email-singUp" class="email" id="email-singUp">
@@ -17,7 +19,8 @@ const Header = {
                     <label for="password-singUp">Password</label>
                     <br />
                     <input type="password" name="password-singUp" id="password-singUp" class="password-form">
-                    <div>
+                    <div class="text-form">
+                        <p id="invalid-message-singUp" class="invalid-message"></p>
                         <p>Already have an account?
                             <a id="change-login-form-btn" class="login-form-link">Login</a>
                         </p>
@@ -25,7 +28,6 @@ const Header = {
                     <button id="singUp-btn" disabled="true" class="form-btn singUp-btn">Sing Up</button>
                 </form>
             </div>
-
             <div id="form-overlay-login" class="form-overlay form_closed">
                 <form action="#" id="form-login" class="form form-login">
                     <p class="form-title">Login</p>
@@ -36,7 +38,8 @@ const Header = {
                     <label for="password-login">Password</label>
                     <br />
                     <input type="password" name="password-login" id="password-login" class="password-form">
-                    <div>
+                    <div class="text-form">
+                        <p id="invalid-message-login" class="invalid-message"></p>
                         <p>Don't have an account?
                             <a id="change-singUp-form-btn" class="login-form-link">Sign up</a>
                         </p>
@@ -90,7 +93,7 @@ const Footer = {
     render: (customClass = "") => {
         return `
         <footer id="footer" class="footer ${customClass}">
-            <p>&#169; by Siarhei Melekh</p>
+            <p>&#169; Siarhei Melekh</p>
         </footer>`;
     }
 };

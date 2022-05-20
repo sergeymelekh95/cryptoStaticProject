@@ -2,7 +2,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js";
-import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-database.js";
+import { getDatabase, set, ref, update, onValue  } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-database.js";
 
 export default createUserWithEmailAndPassword;
 // TODO: Add SDKs for Firebase products that you want to use
@@ -79,6 +79,8 @@ const cryptoStatSPA = (function() {
         const myTension = 0.5;
         const defaultNameChart = 'market cap';
         let createdChartChanges = false;
+        const invalidMessageLogin = 'Invalid email or password';
+        const invalidMessageSingUp = 'Invalid email';
 
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -692,6 +694,16 @@ const cryptoStatSPA = (function() {
         this.changeStatus = function(userEmail) {
             myModuleContainer.querySelector('#userEmail').innerHTML = userEmail;
         };
+
+        this.showInvalidMessage = function(formName) {
+            if (formName === 'login') {
+                myModuleContainer.querySelector('#invalid-message-login').innerHTML = invalidMessageLogin;
+            }
+
+            if (formName === 'singUp') {
+                myModuleContainer.querySelector('#invalid-message-singUp').innerHTML = invalidMessageSingUp;
+            }
+        };
     }
 
     function ModuleModel() {
@@ -733,16 +745,12 @@ const cryptoStatSPA = (function() {
         this.checkAccessRights = function() {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                  // User is signed in, see docs for a list of available properties
-                  // https://firebase.google.com/docs/reference/js/firebase.User
-                //   const uid = user.uid;
-                  console.log(user);
-                  myModuleView.changeStatus(user.email);
-                  // ...
-                } else {
-                    myModuleView.toggleLoginForm();
-                  // User is signed out
-                  // ...
+                    const userId = auth.currentUser.uid;
+
+                    return onValue(ref(database, '/users/' + userId), (snapshot) => {
+                    const username = (snapshot.val() && snapshot.val().name) || 'Anonymous';
+                    myModuleView.changeStatus(snapshot.val().name);
+                    }, {onlyOnce: true});
                 }
             });
         };
@@ -1150,39 +1158,27 @@ const cryptoStatSPA = (function() {
             myModuleView.toggleLoginForm();
         };
 
-        // this.saveUserEmail = function(userEmail) {
-        //     window.localStorage.setItem('userEmail', JSON.stringify(userEmail));
-        // };
-
-        this.submitData = function(inputEmailSingUpValue, inputPasswordSingUpValue) {
+        this.submitData = function(inputEmailSingUpValue, inputPasswordSingUpValue, inputUserNameValue) {
             createUserWithEmailAndPassword(auth, inputEmailSingUpValue, inputPasswordSingUpValue)
                 .then((userCredential) => {
-                    // Signed in 
                     const user = userCredential.user;
                     //тут можно перенаправить на дуругю страницу
                     set(ref(database, 'users/' + user.uid), {
                         email: inputEmailSingUpValue,
-                        password : inputPasswordSingUpValue
+                        password : inputPasswordSingUpValue,
+                        name: inputUserNameValue
                     })
                     .then(() => {
                         // Data saved successfully!
                         myModuleView.clearForm('singUp');
                         myModuleView.toggleSingUpForm();
-                        console.log(user.uid, 'YEE'); // уникальный идентификатор юзера
-                    })
-                    .catch((error) => {
-                        // The write failed...
-                        console.log(error, 'NOO');
-                        myModuleView.updateDisabledSingUpFormBtn(false);
-                        //вывести под инпутом что ошибка
+                        // console.log(user.uid, 'YEE'); // уникальный идентификатор юзера
                     });
-                    // ...
                 })
                 .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    // ..
-                    console.log(errorMessage, 'NO');
+                    // const errorCode = error.code;
+                    // const errorMessage = error.message;
+                    myModuleView.showInvalidMessage('singUp');
                     myModuleView.updateDisabledSingUpFormBtn(false);
                 });
         };
@@ -1190,9 +1186,7 @@ const cryptoStatSPA = (function() {
         this.login = function(inputEmailLoginValue, inputPasswordLoginValue) {
             signInWithEmailAndPassword(auth, inputEmailLoginValue, inputPasswordLoginValue)
             .then((userCredential) => {
-                // Signed in 
                 const user = userCredential.user;
-                // ...
                 const lgDate = new Date();
                 //обновляем дату последнего входа
                 update(ref(database, 'users/' + user.uid), {
@@ -1201,33 +1195,26 @@ const cryptoStatSPA = (function() {
                 .then(() => {
                     // Data saved successfully!
                     myModuleView.clearForm('login');
+                    // myModuleView.toggleLoginForm();
+                    // myModuleView.changeStatus(user.email);
+                    this.checkAccessRights();
                     myModuleView.toggleLoginForm();
-                    myModuleView.changeStatus(user.email);
-                    console.log('Logined'); // уникальный идентификатор юзера
-                })
-                .catch((error) => {
-                    // The write failed...
-                    console.log(error, 'NO logined');
-                    myModuleView.updateDisabledLoginFormBtn(false);
-                    //вывести под инпутом что ошибка
                 });
-                // ...
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(errorMessage, 'NO logined');
+                myModuleView.showInvalidMessage('login');
                 myModuleView.updateDisabledLoginFormBtn(false);
             });
         };
 
         this.singOut = function() {
             signOut(auth).then(() => {
-                // Sign-out successful.
                 myModuleView.changeStatus('');
-            }).catch((error) => {
-                // An error happened.
-            });
+                myModuleView.toggleLoginForm();
+            }).catch((error) => {});
         };
 
         this.checkDisabledLoginFormBtn = function(inputEmailLoginValue, inputPasswordLoginValue) {
@@ -1238,8 +1225,8 @@ const cryptoStatSPA = (function() {
             }
         };
 
-        this.checkDisabledSingUpFormBtn = function(inputEmailSingUpValue, inputPasswordSingUpValue) {
-            if (inputEmailSingUpValue.length > 5 && inputPasswordSingUpValue.length > 6) {
+        this.checkDisabledSingUpFormBtn = function(inputEmailSingUpValue, inputPasswordSingUpValue, inputUserNameValue) {
+            if (inputEmailSingUpValue.length > 5 && inputPasswordSingUpValue.length > 6 && inputUserNameValue.length > 2) {
                 myModuleView.updateDisabledSingUpFormBtn(false);
             } else {
                 myModuleView.updateDisabledSingUpFormBtn(true);
@@ -1277,6 +1264,7 @@ const cryptoStatSPA = (function() {
         let inputPasswordSingUp = null;
         let inputEmailLogin = null;
         let inputPasswordLogin = null;
+        let inputUserName = null;
 
         this.init = function(container, model) {
             myModuleContainer = container;
@@ -1296,6 +1284,7 @@ const cryptoStatSPA = (function() {
 
             inputEmailSingUp = myModuleContainer.querySelector('#email-singUp');
             inputPasswordSingUp = myModuleContainer.querySelector('#password-singUp');
+            inputUserName = myModuleContainer.querySelector('#userName-input');
 
             inputEmailLogin = myModuleContainer.querySelector('#email-login');
             inputPasswordLogin = myModuleContainer.querySelector('#password-login');
@@ -1389,7 +1378,7 @@ const cryptoStatSPA = (function() {
             if (event.target.id === 'singUp-btn') {
                 event.preventDefault();
                 myModuleModel.disabledFormSingUpBtn(true);
-                myModuleModel.submitData(inputEmailSingUp.value, inputPasswordSingUp.value);
+                myModuleModel.submitData(inputEmailSingUp.value, inputPasswordSingUp.value, inputUserName.value);
             }
 
             if (event.target.id === 'login-btn') {
@@ -1413,11 +1402,15 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.id === 'email-singUp') {
-                myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value);
+                myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value, inputUserName.value);
             }
 
             if (event.target.id === 'password-singUp') {
-                myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value);
+                myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value, inputUserName.value);
+            }
+
+            if (event.target.id === 'userName-input') {
+                myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value, inputUserName.value);
             }
         };
     }
