@@ -84,6 +84,9 @@ body {
     position: absolute;
     bottom: 9%;
     left: 30%;
+    background: url('../img/leave_acc.svg') top left no-repeat;
+    width: 22px;
+    height: 22px;
 }
 
 .title::first-letter {
@@ -465,6 +468,7 @@ padding: .6em .8em .5em 1.4em;
 /* form=============================================== */
 
 .form-overlay {
+    text-align: start;
     position: fixed;
     top: 0;
     left: 0;
@@ -475,7 +479,7 @@ padding: .6em .8em .5em 1.4em;
 }
 
 .form {
-    padding: 80px 20px 20px 20px;
+    padding: 40px 20px 20px 20px;
     position: relative;
     background-color: #3f3f3f;
     width: 500px;
@@ -515,7 +519,7 @@ padding: .6em .8em .5em 1.4em;
     margin-bottom: 40px;
 }
 
-.close-form-btn {
+/* .close-form-btn {
     position: absolute;
     left: 25px;
     top: 25px;
@@ -523,7 +527,7 @@ padding: .6em .8em .5em 1.4em;
     height: 32px;
     opacity: 0.6;
     cursor: pointer;
-}
+} */
 
 .close-form-btn:hover {
     opacity: 1;
@@ -580,7 +584,7 @@ padding: .6em .8em .5em 1.4em;
 }
 
 .form-btn:disabled {
-    background-color: #b19fc3;
+    background-color: #9d8cad;
 }
 
 .form_closed {
@@ -591,10 +595,10 @@ padding: .6em .8em .5em 1.4em;
 }
 
 .form-singIn {
-
-
 }
 
+.userEmail {
+}
 
 
 

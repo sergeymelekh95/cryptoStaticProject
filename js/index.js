@@ -1,4 +1,28 @@
 "use strict";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js";
+import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-database.js";
+
+export default createUserWithEmailAndPassword;
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDfMFCaBUJZzS0IzQhytp-1LKqw82dYmcc",
+    authDomain: "crypto-stat-app.firebaseapp.com",
+    projectId: "crypto-stat-app",
+    storageBucket: "crypto-stat-app.appspot.com",
+    messagingSenderId: "526056261105",
+    appId: "1:526056261105:web:83ed95af9d8cfbf854b050"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
 // Список компонентов (from components.js)
 const components = {
     header: Header,
@@ -644,6 +668,30 @@ const cryptoStatSPA = (function() {
                 document.body.style.overflow = 'auto';
             }
         };
+
+        this.clearForm = function(typeForm) {
+            if (typeForm === 'login') {
+                myModuleContainer.querySelector('#email-login').value = '';
+                myModuleContainer.querySelector('#password-login').value = '';
+            }
+
+            if (typeForm === 'singUp') {
+                myModuleContainer.querySelector('#email-singUp').value = '';
+                myModuleContainer.querySelector('#password-singUp').value = '';
+            }
+        };
+
+        this.updateDisabledLoginFormBtn = function(state) {
+            myModuleContainer.querySelector('#login-btn').disabled = state;
+        };
+
+        this.updateDisabledSingUpFormBtn = function(state) {
+            myModuleContainer.querySelector('#singUp-btn').disabled = state;
+        };
+
+        this.changeStatus = function(userEmail) {
+            myModuleContainer.querySelector('#userEmail').innerHTML = userEmail;
+        };
     }
 
     function ModuleModel() {
@@ -664,13 +712,13 @@ const cryptoStatSPA = (function() {
         const defaultCoinId = 'bitcoin';
         const defaultTypeChart = 'market-cap';
 
-
         let myId = null;
         let myCurrency = null;
         let myTypeChart = null;
 
         this.init = function(view) {
             myModuleView = view;
+            this.checkAccessRights();//проверка прав доступа
 
             if (location.hash.slice(1) === "") {
                 this.getSuppurtedCurrencies();
@@ -680,6 +728,23 @@ const cryptoStatSPA = (function() {
                     this.getDataForTable();
                 }
             }
+        };
+
+        this.checkAccessRights = function() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                  // User is signed in, see docs for a list of available properties
+                  // https://firebase.google.com/docs/reference/js/firebase.User
+                //   const uid = user.uid;
+                  console.log(user);
+                  myModuleView.changeStatus(user.email);
+                  // ...
+                } else {
+                    myModuleView.toggleLoginForm();
+                  // User is signed out
+                  // ...
+                }
+            });
         };
 
         this.updateState = function(pageName) {
@@ -743,16 +808,18 @@ const cryptoStatSPA = (function() {
             .then(data => this.parseDataForTable(data));
         };
 
+        const checkValidNum = num => !num ? num : num.toFixed(1);
+
         this.parseDataForTable = function(data) {
             dataTable = [];
 
             for(let i = 0; i < data.length; ++i) {
                 const id = data[i].id;
                 const nameCoin = data[i].name;
-                const currentPrice = data[i].current_price.toFixed(2);
-                const changePercentageOneHour = data[i].price_change_percentage_1h_in_currency.toFixed(2);
-                const changePercentageOneWeek = data[i].price_change_percentage_7d_in_currency.toFixed(2);
-                const changePercentageOneDay = data[i].price_change_percentage_24h_in_currency.toFixed(2);
+                const currentPrice = checkValidNum(data[i].current_price);
+                const changePercentageOneHour = checkValidNum(data[i].price_change_percentage_1h_in_currency);
+                const changePercentageOneWeek = checkValidNum(data[i].price_change_percentage_7d_in_currency);
+                const changePercentageOneDay = checkValidNum(data[i].price_change_percentage_24h_in_currency);
                 const image = data[i].image;
                 const symbol = data[i].symbol;
                 const number = i + 1;
@@ -816,12 +883,15 @@ const cryptoStatSPA = (function() {
         this.addDataChart = function(checkedId, periodSelecValue, checkedNameCoin) {
             if (periodSelecValue === 'hour') {
                 myModuleView.updateDisableCheckboxes(true);
+
                 fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=1&interval=minutely`).
                 then(response => response.json()).
-                then(data => parseDataHour(data.prices.slice(-13)));
+                then(data => parseDataHour(data.prices.slice(-13)))
+                .catch(error => console.log(error));
             }
 
             const parseDataHour = data => {
+                console.log(data);
                 myModuleView.updateDisableCheckboxes(false);
                 const timeArr = [];
                 const priceArr = [];
@@ -838,7 +908,8 @@ const cryptoStatSPA = (function() {
                 myModuleView.updateDisableCheckboxes(true);
                 fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=1&interval=hourly`).
                 then(response => response.json()).
-                then(data => parseDataDay(data.prices));
+                then(data => parseDataDay(data.prices))
+                .catch(error => console.log(error));
             }
 
             const parseDataDay = data => {
@@ -1078,7 +1149,118 @@ const cryptoStatSPA = (function() {
         this.toggleLoginForm = function() {
             myModuleView.toggleLoginForm();
         };
-        
+
+        // this.saveUserEmail = function(userEmail) {
+        //     window.localStorage.setItem('userEmail', JSON.stringify(userEmail));
+        // };
+
+        this.submitData = function(inputEmailSingUpValue, inputPasswordSingUpValue) {
+            createUserWithEmailAndPassword(auth, inputEmailSingUpValue, inputPasswordSingUpValue)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    //тут можно перенаправить на дуругю страницу
+                    set(ref(database, 'users/' + user.uid), {
+                        email: inputEmailSingUpValue,
+                        password : inputPasswordSingUpValue
+                    })
+                    .then(() => {
+                        // Data saved successfully!
+                        myModuleView.clearForm('singUp');
+                        myModuleView.toggleSingUpForm();
+                        console.log(user.uid, 'YEE'); // уникальный идентификатор юзера
+                    })
+                    .catch((error) => {
+                        // The write failed...
+                        console.log(error, 'NOO');
+                        myModuleView.updateDisabledSingUpFormBtn(false);
+                        //вывести под инпутом что ошибка
+                    });
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // ..
+                    console.log(errorMessage, 'NO');
+                    myModuleView.updateDisabledSingUpFormBtn(false);
+                });
+        };
+ 
+        this.login = function(inputEmailLoginValue, inputPasswordLoginValue) {
+            signInWithEmailAndPassword(auth, inputEmailLoginValue, inputPasswordLoginValue)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                // ...
+                const lgDate = new Date();
+                //обновляем дату последнего входа
+                update(ref(database, 'users/' + user.uid), {
+                    last_login: lgDate,
+                })
+                .then(() => {
+                    // Data saved successfully!
+                    myModuleView.clearForm('login');
+                    myModuleView.toggleLoginForm();
+                    myModuleView.changeStatus(user.email);
+                    console.log('Logined'); // уникальный идентификатор юзера
+                })
+                .catch((error) => {
+                    // The write failed...
+                    console.log(error, 'NO logined');
+                    myModuleView.updateDisabledLoginFormBtn(false);
+                    //вывести под инпутом что ошибка
+                });
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorMessage, 'NO logined');
+                myModuleView.updateDisabledLoginFormBtn(false);
+            });
+        };
+
+        this.singOut = function() {
+            signOut(auth).then(() => {
+                // Sign-out successful.
+                myModuleView.changeStatus('');
+            }).catch((error) => {
+                // An error happened.
+            });
+        };
+
+        this.checkDisabledLoginFormBtn = function(inputEmailLoginValue, inputPasswordLoginValue) {
+            if (inputEmailLoginValue.length > 5 && inputPasswordLoginValue.length > 6) {
+                myModuleView.updateDisabledLoginFormBtn(false);
+            } else {
+                myModuleView.updateDisabledLoginFormBtn(true);
+            }
+        };
+
+        this.checkDisabledSingUpFormBtn = function(inputEmailSingUpValue, inputPasswordSingUpValue) {
+            if (inputEmailSingUpValue.length > 5 && inputPasswordSingUpValue.length > 6) {
+                myModuleView.updateDisabledSingUpFormBtn(false);
+            } else {
+                myModuleView.updateDisabledSingUpFormBtn(true);
+            }
+        };
+
+        this.disabledFormSingUpBtn = function(state) {
+            if (state) {
+                myModuleView.updateDisabledSingUpFormBtn(true);
+            } else {
+                myModuleView.updateDisabledSingUpFormBtn(false);
+            }
+        };
+
+        this.disabledFormLoginBtn = function(state) {
+            if (state) {
+                myModuleView.updateDisabledLoginFormBtn(true);
+            } else {
+                myModuleView.updateDisabledLoginFormBtn(false);
+            }
+        };
     }
 
     function ModuleController() {
@@ -1091,6 +1273,10 @@ const cryptoStatSPA = (function() {
         let periodSelect = null;
         let selectPeriodValue = null;
         let selectTypesChartsValue = null;
+        let inputEmailSingUp = null;
+        let inputPasswordSingUp = null;
+        let inputEmailLogin = null;
+        let inputPasswordLogin = null;
 
         this.init = function(container, model) {
             myModuleContainer = container;
@@ -1106,6 +1292,13 @@ const cryptoStatSPA = (function() {
 
             myModuleContainer.addEventListener('change', this.getValue);
             myModuleContainer.addEventListener('click', this.handleClick);
+            myModuleContainer.addEventListener('input', this.checkDisabledFormBtn);
+
+            inputEmailSingUp = myModuleContainer.querySelector('#email-singUp');
+            inputPasswordSingUp = myModuleContainer.querySelector('#password-singUp');
+
+            inputEmailLogin = myModuleContainer.querySelector('#email-login');
+            inputPasswordLogin = myModuleContainer.querySelector('#password-login');
         };
 
         this.getValue = function(event) {
@@ -1175,27 +1368,12 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.id === 'clear-btn') {
+                checkedId = [];
                 myModuleModel.clearChart();
             }
 
             if (event.target.classList.contains('link_info')) {
                 myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
-            }
-
-            if (event.target.id === 'close-form-singUp-btn') {
-                myModuleModel.toggleSingUpForm();
-            }
-
-            if (event.target.id === 'show-form-singUp-btn') {
-                myModuleModel.toggleSingUpForm();
-            }
-
-            if (event.target.id === 'show-form-login-btn') {
-                myModuleModel.toggleLoginForm();
-            }
-
-            if (event.target.id === 'close-form-login-btn') {
-                myModuleModel.toggleLoginForm();
             }
 
             if (event.target.id === 'change-login-form-btn') {
@@ -1206,6 +1384,40 @@ const cryptoStatSPA = (function() {
             if (event.target.id === 'change-singUp-form-btn') {
                 myModuleModel.toggleLoginForm();
                 myModuleModel.toggleSingUpForm();
+            }
+
+            if (event.target.id === 'singUp-btn') {
+                event.preventDefault();
+                myModuleModel.disabledFormSingUpBtn(true);
+                myModuleModel.submitData(inputEmailSingUp.value, inputPasswordSingUp.value);
+            }
+
+            if (event.target.id === 'login-btn') {
+                event.preventDefault();
+                myModuleModel.disabledFormLoginBtn(true);
+                myModuleModel.login(inputEmailLogin.value, inputPasswordLogin.value);
+            }
+
+            if (event.target.id === 'leave-acc-btn') {
+                myModuleModel.singOut();
+            }
+        };
+
+        this.checkDisabledFormBtn = function(event) {
+            if (event.target.id === 'email-login') {
+                myModuleModel.checkDisabledLoginFormBtn(inputEmailLogin.value, inputPasswordLogin.value);
+            }
+
+            if (event.target.id === 'password-login') {
+                myModuleModel.checkDisabledLoginFormBtn(inputEmailLogin.value, inputPasswordLogin.value);
+            }
+
+            if (event.target.id === 'email-singUp') {
+                myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value);
+            }
+
+            if (event.target.id === 'password-singUp') {
+                myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value);
             }
         };
     }
