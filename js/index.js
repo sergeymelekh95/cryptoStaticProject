@@ -723,6 +723,7 @@ const cryptoStatSPA = (function() {
         let gotStatisticData = null;
         const defaultCoinId = 'bitcoin';
         const defaultTypeChart = 'market-cap';
+        let isLogin = null;
 
         let myId = null;
         let myCurrency = null;
@@ -746,11 +747,18 @@ const cryptoStatSPA = (function() {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     const userId = auth.currentUser.uid;
+                    isLogin = true;
 
                     return onValue(ref(database, '/users/' + userId), (snapshot) => {
                     const username = (snapshot.val() && snapshot.val().name) || 'Anonymous';
                     myModuleView.changeStatus(snapshot.val().name);
                     }, {onlyOnce: true});
+                } else {
+                    if (isLogin) {
+                        myModuleView.toggleLoginForm();
+                    }
+
+                    isLogin = null;
                 }
             });
         };
@@ -1172,7 +1180,6 @@ const cryptoStatSPA = (function() {
                         // Data saved successfully!
                         myModuleView.clearForm('singUp');
                         myModuleView.toggleSingUpForm();
-                        // console.log(user.uid, 'YEE'); // уникальный идентификатор юзера
                     });
                 })
                 .catch((error) => {
@@ -1213,7 +1220,7 @@ const cryptoStatSPA = (function() {
         this.singOut = function() {
             signOut(auth).then(() => {
                 myModuleView.changeStatus('');
-                myModuleView.toggleLoginForm();
+                // myModuleView.toggleLoginForm();
             }).catch((error) => {});
         };
 
