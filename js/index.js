@@ -749,60 +749,70 @@ const cryptoStatSPA = (function() {
         };
 
         this.toggleLoader = function(stateRequest, nameBlock) {
-            if (nameBlock === 'chartTop10') {
-                const chartTop10Block = myModuleContainer.querySelector('#market-cup-chart-block');
-                if (stateRequest) {
-                    chartTop10Block.append(createLoader());
-                } else {
-                    if (chartTop10Block.querySelector('#loader')) {
-                        chartTop10Block.querySelector('#loader').remove();
+            setTimeout(() => {
+                if (nameBlock === 'chartTop10') {
+                    const chartTop10Block = myModuleContainer.querySelector('#market-cup-chart-block');
+                    if (stateRequest) {
+                        chartTop10Block.append(createLoader());
+                    } else {
+                        if (chartTop10Block.querySelector('#loader')) {
+                            chartTop10Block.querySelector('#loader').remove();
+                        }
                     }
                 }
-            }
+            }, 0);
 
-            if (nameBlock === 'historycsChart') {
-                const historycsChartBlock = myModuleContainer.querySelector('#chart-statistics-block');
-                if (stateRequest) {
-                    historycsChartBlock.append(createLoader());
-                } else {
-                    if (historycsChartBlock.querySelector('#loader')) {
-                        historycsChartBlock.querySelector('#loader').remove();
+            setTimeout(() => {
+                if (nameBlock === 'historycsChart') {
+                    const historycsChartBlock = myModuleContainer.querySelector('#chart-statistics-block');
+                    if (stateRequest) {
+                        historycsChartBlock.append(createLoader());
+                    } else {
+                        if (historycsChartBlock.querySelector('#loader')) {
+                            historycsChartBlock.querySelector('#loader').remove();
+                        }
                     }
                 }
-            }
+            }, 0);
 
-            if (nameBlock === 'coinInfoTable') {
-                const coinInfoTableBlock = myModuleContainer.querySelector('#coin-info-table-block');
-                if (stateRequest) {
-                    coinInfoTableBlock.append(createLoader());
-                } else {
-                    if (coinInfoTableBlock.querySelector('#loader')) {
-                        coinInfoTableBlock.querySelector('#loader').remove();
+            setTimeout(() => {
+                if (nameBlock === 'coinInfoTable') {
+                    const coinInfoTableBlock = myModuleContainer.querySelector('#coin-info-table-block');
+                    if (stateRequest) {
+                        coinInfoTableBlock.append(createLoader());
+                    } else {
+                        if (coinInfoTableBlock.querySelector('#loader')) {
+                            coinInfoTableBlock.querySelector('#loader').remove();
+                        }
                     }
                 }
-            }
+            }, 0);
 
-            if (nameBlock === 'ownChart') {
-                const ownChartBlock = myModuleContainer.querySelector('#chart-block');
-                if (stateRequest) {
-                    ownChartBlock.append(createLoader());
-                } else {
-                    if (ownChartBlock.querySelector('#loader')) {
-                        ownChartBlock.querySelector('#loader').remove();
+            setTimeout(() => {
+                if (nameBlock === 'ownChart') {
+                    const ownChartBlock = myModuleContainer.querySelector('#chart-block');
+                    if (stateRequest) {
+                        ownChartBlock.append(createLoader());
+                    } else {
+                        if (ownChartBlock.querySelector('#loader')) {
+                            ownChartBlock.querySelector('#loader').remove();
+                        }
                     }
                 }
-            }
+            }, 0);
 
-            if (nameBlock === 'ownTable') {
-                const ownTableBlock = myModuleContainer.querySelector('#crypto-info-table-block');
-                if (stateRequest) {
-                    ownTableBlock.append(createLoader());
-                } else {
-                    if (ownTableBlock.querySelector('#loader')) {
-                        ownTableBlock.querySelector('#loader').remove();
+            setTimeout(() => {
+                if (nameBlock === 'ownTable') {
+                    const ownTableBlock = myModuleContainer.querySelector('#crypto-info-table-block');
+                    if (stateRequest) {
+                        ownTableBlock.append(createLoader());
+                    } else {
+                        if (ownTableBlock.querySelector('#loader')) {
+                            ownTableBlock.querySelector('#loader').remove();
+                        }
                     }
                 }
-            }
+            }, 0);
         };
     }
 
@@ -908,7 +918,8 @@ const cryptoStatSPA = (function() {
         this.getSuppurtedCurrencies = function() {    
             fetch(`${api}/v3/simple/supported_vs_currencies`)
             .then(response => response.json())
-            .then(arr => this.buildSelectCurrencies(arr)); 
+            .then(arr => this.buildSelectCurrencies(arr))
+            .catch(error => myModuleView.renderContent('error')); 
         };
 
         this.buildSelectCurrencies = function(arr) {
@@ -924,7 +935,8 @@ const cryptoStatSPA = (function() {
             myModuleView.toggleLoader(true, 'ownTable');
             fetch(`${api}/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=${countCoinsInRequest}&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d`)
             .then(response => response.json())
-            .then(data => this.parseDataForTable(data));
+            .then(data => this.parseDataForTable(data))
+            .catch(error => myModuleView.renderContent('error'));
         };
 
         const checkValidNum = num => !num ? num : num.toFixed(1);
@@ -1006,7 +1018,7 @@ const cryptoStatSPA = (function() {
                 fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=1&interval=minutely`).
                 then(response => response.json()).
                 then(data => parseDataHour(data.prices.slice(-13)))
-                .catch(error => console.log(error));
+                .catch(error => myModuleView.renderContent('error'));
             }
 
             const parseDataHour = data => {
@@ -1028,7 +1040,7 @@ const cryptoStatSPA = (function() {
                 fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=1&interval=hourly`).
                 then(response => response.json()).
                 then(data => parseDataDay(data.prices))
-                .catch(error => console.log(error));
+                .catch(error => myModuleView.renderContent('error'));
             }
 
             const parseDataDay = data => {
@@ -1048,7 +1060,8 @@ const cryptoStatSPA = (function() {
                 myModuleView.updateDisableCheckboxes(true);
                 fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=7&interval=daily`).
                 then(response => response.json()).
-                then(data => parseDataWeek(data.prices));
+                then(data => parseDataWeek(data.prices))
+                .catch(error => myModuleView.renderContent('error'));
             }
 
             const parseDataWeek = data => {
@@ -1068,7 +1081,8 @@ const cryptoStatSPA = (function() {
                 myModuleView.updateDisableCheckboxes(true);
                 fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=30&interval=daily`).
                 then(response => response.json()).
-                then(data => parseDataMonth(data.prices));
+                then(data => parseDataMonth(data.prices))
+                .catch(error => myModuleView.renderContent('error'));
             }
 
             const parseDataMonth = data => {
@@ -1088,7 +1102,8 @@ const cryptoStatSPA = (function() {
                 myModuleView.updateDisableCheckboxes(true);
                 fetch(`${api}/v3/coins/${checkedId[checkedId.length - 1]}/market_chart?vs_currency=${chartCurrency}&days=365&interval=daily`).
                 then(response => response.json()).
-                then(data => parseDataYear(data.prices));
+                then(data => parseDataYear(data.prices))
+                .catch(error => myModuleView.renderContent('error'));
             }
 
             const parseDataYear = data => {
@@ -1139,7 +1154,8 @@ const cryptoStatSPA = (function() {
             // top 10
             fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&order=market_cap_desc&per_page=${topMarketCup}&page=1&sparkline=false`)
             .then(response => response.json())
-            .then(topMarketCupData => this.parseTopMarketCupData(topMarketCupData));
+            .then(topMarketCupData => this.parseTopMarketCupData(topMarketCupData))
+            .catch(error => myModuleView.renderContent('error'));
         };
 
         this.setLocalDataTableStatistic = function(currency, id, typeChart) {
@@ -1163,13 +1179,15 @@ const cryptoStatSPA = (function() {
             myModuleView.toggleLoader(true, 'coinInfoTable');
             fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&ids=${myId}&sparkline=false`)
             .then(response => response.json())
-            .then(data => this.parseStatisticDataForTable(data, myCurrency));
+            .then(data => this.parseStatisticDataForTable(data, myCurrency))
+            .catch(error => myModuleView.renderContent('error'));
 
             //for 3 charts
             myModuleView.toggleLoader(true, 'historycsChart');
             fetch(`${api}/v3/coins/${myId}/market_chart?vs_currency=${myCurrency}&days=max&interval=daily`)
             .then(response => response.json())
-            .then(data => this.parseHistoricalDataForCharts(data, currency, id, myTypeChart));
+            .then(data => this.parseHistoricalDataForCharts(data, currency, id, myTypeChart))
+            .catch(error => myModuleView.renderContent('error'));
         };
 
         this.updateTypeChart = function(typeChart) {
