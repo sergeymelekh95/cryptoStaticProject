@@ -21,7 +21,7 @@ const HomePage = {
             <div id="currency-block" class="currency-block">
                 <select name="currency-select" id="currency-select" class="currency-select select"></select>
             </div>
-            <div class="crypto-info-table-block">
+            <div id="crypto-info-table-block" class="crypto-info-table-block">
                 <table id="crypto-info-table" class="crypto-info-table"></table>
             </div>
             <div class="table-btn-container">
@@ -58,7 +58,7 @@ const CoinInfo = {
                             <canvas id="market-cup-chart" class="market-cup-chart"></canvas>
                         </div>
                     </div>
-                    <div class="coin-info-table-block">
+                    <div id="coin-info-table-block" class="coin-info-table-block">
                         <table id="coin-stat-table" class="coin-info-table"></table>
                     </div>
                 </div>

@@ -226,6 +226,7 @@ const cryptoStatSPA = (function() {
                 }
 
                 dataTableStr += `</tbody>`;
+                this.toggleLoader(false, 'ownTable'); // loader off
                 contentContainer.querySelector('#crypto-info-table').innerHTML = dataTableStr;
 
                 this.addCheckbox();
@@ -382,6 +383,7 @@ const cryptoStatSPA = (function() {
                 }
             };
 
+            this.toggleLoader(false, 'ownChart');
             chart = document.getElementById('analytic-chart');
             myChart = new Chart(
                 chart,
@@ -501,7 +503,7 @@ const cryptoStatSPA = (function() {
                 }
             };
 
-            this.toggleLoader(false);
+            this.toggleLoader(false, 'chartTop10');
             const marketCupChart = new Chart(chartTopMarketCup, config);
         };
 
@@ -525,12 +527,14 @@ const cryptoStatSPA = (function() {
             const numberWithCommas = num => {
                 if (num !== null) {
                     let parts = num.toString().split(".");
-                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");//разбиваю большие числа на части
                     return parts.join(".");
                 } else {
                     return 'no data';
                 }
             };
+
+            this.toggleLoader(false, 'coinInfoTable'); // loader off
 
             tableStatisticData.innerHTML = `
                 <colgroup>
@@ -555,7 +559,7 @@ const cryptoStatSPA = (function() {
                     </tr>
                     <tr>
                         <td>24h min / 24h max</td>
-                        <td class="table-value">${dataForTable.low24h} / ${dataForTable.high24h}</td>
+                        <td class="table-value">${numberWithCommas(dataForTable.low24h)} / ${numberWithCommas(dataForTable.high24h)}</td>
                     </tr>
                     <tr>
                         <td>Market cap change 24h</td>
@@ -638,12 +642,14 @@ const cryptoStatSPA = (function() {
                     }
                 };
     
+                this.toggleLoader(false, 'historycsChart');
                 myChart = new Chart(
                     chartMarketCups,
                     config
                 );
 
                 createdChartChanges = true;
+
             } else {
                 this.updatecreateChartsChanges(marketCapsObj, currency, id, myTypeChart);
             }
@@ -742,14 +748,59 @@ const cryptoStatSPA = (function() {
             return loader;
         };
 
-        this.toggleLoader = function(stateRequest) {
-            const chartTop10Block = myModuleContainer.querySelector('#market-cup-chart-block');
+        this.toggleLoader = function(stateRequest, nameBlock) {
+            if (nameBlock === 'chartTop10') {
+                const chartTop10Block = myModuleContainer.querySelector('#market-cup-chart-block');
+                if (stateRequest) {
+                    chartTop10Block.append(createLoader());
+                } else {
+                    if (chartTop10Block.querySelector('#loader')) {
+                        chartTop10Block.querySelector('#loader').remove();
+                    }
+                }
+            }
 
-            if (stateRequest) {
-                chartTop10Block.append(createLoader());
-            } else {
-                if (chartTop10Block.querySelector('#loader')) {
-                    chartTop10Block.querySelector('#loader').remove();
+            if (nameBlock === 'historycsChart') {
+                const historycsChartBlock = myModuleContainer.querySelector('#chart-statistics-block');
+                if (stateRequest) {
+                    historycsChartBlock.append(createLoader());
+                } else {
+                    if (historycsChartBlock.querySelector('#loader')) {
+                        historycsChartBlock.querySelector('#loader').remove();
+                    }
+                }
+            }
+
+            if (nameBlock === 'coinInfoTable') {
+                const coinInfoTableBlock = myModuleContainer.querySelector('#coin-info-table-block');
+                if (stateRequest) {
+                    coinInfoTableBlock.append(createLoader());
+                } else {
+                    if (coinInfoTableBlock.querySelector('#loader')) {
+                        coinInfoTableBlock.querySelector('#loader').remove();
+                    }
+                }
+            }
+
+            if (nameBlock === 'ownChart') {
+                const ownChartBlock = myModuleContainer.querySelector('#chart-block');
+                if (stateRequest) {
+                    ownChartBlock.append(createLoader());
+                } else {
+                    if (ownChartBlock.querySelector('#loader')) {
+                        ownChartBlock.querySelector('#loader').remove();
+                    }
+                }
+            }
+
+            if (nameBlock === 'ownTable') {
+                const ownTableBlock = myModuleContainer.querySelector('#crypto-info-table-block');
+                if (stateRequest) {
+                    ownTableBlock.append(createLoader());
+                } else {
+                    if (ownTableBlock.querySelector('#loader')) {
+                        ownTableBlock.querySelector('#loader').remove();
+                    }
                 }
             }
         };
@@ -868,6 +919,9 @@ const cryptoStatSPA = (function() {
 
         this.getDataForTable = function(currencyValue) {
             currency = !currencyValue ? dafaulCurrency : currencyValue;
+            //lodaer on
+            myModuleView.toggleLoader(true, 'ownChart');
+            myModuleView.toggleLoader(true, 'ownTable');
             fetch(`${api}/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=${countCoinsInRequest}&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d`)
             .then(response => response.json())
             .then(data => this.parseDataForTable(data));
@@ -1080,7 +1134,7 @@ const cryptoStatSPA = (function() {
         this.getTop10Data = function(currency) {
             const myCurrency = !currency ? dafaulCurrency : currency;
             //show Loader
-            myModuleView.toggleLoader(true);
+            myModuleView.toggleLoader(true, 'chartTop10');
 
             // top 10
             fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&order=market_cap_desc&per_page=${topMarketCup}&page=1&sparkline=false`)
@@ -1106,11 +1160,13 @@ const cryptoStatSPA = (function() {
             this.setLocalDataTableStatistic(myCurrency, myId, myTypeChart);
 
             //for table statistic
+            myModuleView.toggleLoader(true, 'coinInfoTable');
             fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&ids=${myId}&sparkline=false`)
             .then(response => response.json())
             .then(data => this.parseStatisticDataForTable(data, myCurrency));
 
             //for 3 charts
+            myModuleView.toggleLoader(true, 'historycsChart');
             fetch(`${api}/v3/coins/${myId}/market_chart?vs_currency=${myCurrency}&days=max&interval=daily`)
             .then(response => response.json())
             .then(data => this.parseHistoricalDataForCharts(data, currency, id, myTypeChart));
@@ -1150,10 +1206,6 @@ const cryptoStatSPA = (function() {
             } else {
                 myModuleView.createChartChangeMarketCap(createArraysForCharts(totalVolumes), myCurrency, myId, myTypeChart);
             }
-
-            // console.log(createArraysForCharts(marketCapsArr));
-            // console.log(createArraysForCharts(pricesArr));
-            // console.log(createArraysForCharts(totalVolumes));
         };
 
         this.parseTopMarketCupData = function(topMarketCupData) {
@@ -1429,7 +1481,9 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.classList.contains('link_info')) {
-                myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
+                setTimeout(() => {
+                    myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
+                }, 0);
             }
 
             if (event.target.id === 'change-login-form-btn') {

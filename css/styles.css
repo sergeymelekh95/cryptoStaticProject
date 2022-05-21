@@ -93,6 +93,11 @@ body {
     text-transform: capitalize;
 }
 
+.crypto-info-table-block {
+    position: relative;
+    /* height: 560px; */
+}
+
 .crypto-info-table {
     text-align: start;
     width: 100%;
@@ -429,6 +434,7 @@ padding: .6em .8em .5em 1.4em;
     /* max-width: 700px; */
     /* min-width: 0;
     flex: 1; */
+    position: relative;
 }
 
 .market-cup-chart-block {
@@ -446,6 +452,10 @@ padding: .6em .8em .5em 1.4em;
     display: flex;
     gap: 40px;
     margin: 0 0 30px 0;
+}
+
+.coin-info-table-block {
+    position: relative;
 }
 
 .coin-info-table-block, .chart-statistics-block {}

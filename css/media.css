@@ -70,6 +70,10 @@
         width: 100%;
     }
 
+    .coin-info-table-block {
+        margin-bottom: 30px;
+    }
+
     .form {
         width: 80%;
     }
