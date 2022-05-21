@@ -265,7 +265,7 @@ input[type="checkbox"] {
 }
 
 .currency-block {
-    margin: 40px 0 0 0;
+    margin: 20px 0 0 0;
     text-align: end;
 }
 
@@ -431,6 +431,11 @@ padding: .6em .8em .5em 1.4em;
     flex: 1; */
 }
 
+.market-cup-chart-block {
+    height: 466.25px;
+    position: relative;
+}
+
 .type-statistic-block {
     text-align: end;
     margin: 0 0 15px 0;
@@ -501,7 +506,7 @@ padding: .6em .8em .5em 1.4em;
 }
 
 .email {
-    margin: 0 0 20px 0;
+    /* margin: 0 0 20px 0; */
 }
 
 .form input {
@@ -516,7 +521,7 @@ padding: .6em .8em .5em 1.4em;
 }
 
 .userName-input {
-    margin-bottom: 32px;
+    margin-bottom: 15px;
 }
 
 .form input:focus {
@@ -525,7 +530,7 @@ padding: .6em .8em .5em 1.4em;
 
 .form-title {
     font-size: 2.2rem;
-    margin-bottom: 40px;
+    margin-bottom: 35px;
 }
 
 /* .close-form-btn {
@@ -625,7 +630,6 @@ padding: .6em .8em .5em 1.4em;
 
 
 
-
 /* form=============================================== */
 
 
@@ -633,16 +637,16 @@ padding: .6em .8em .5em 1.4em;
 
 
 
-
-
-
 .loader {
-    border: 4px solid #f3f3f3;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 7px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 4px solid #3498db;
-    width: 12px;
-    height: 12px;
-    -webkit-animation: spin 1s linear infinite; /* Safari */
+    border-top: 7px solid #3498db;
+    width: 30px;
+    height: 30px;
+    -webkit-animation: spin 1s linear infinite; /*Safari */
     animation: spin 1s linear infinite;
 }
 

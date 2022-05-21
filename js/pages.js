@@ -21,7 +21,9 @@ const HomePage = {
             <div id="currency-block" class="currency-block">
                 <select name="currency-select" id="currency-select" class="currency-select select"></select>
             </div>
-            <table id="crypto-info-table" class="crypto-info-table"></table>
+            <div class="crypto-info-table-block">
+                <table id="crypto-info-table" class="crypto-info-table"></table>
+            </div>
             <div class="table-btn-container">
                 <div>
                     <button id="clear-btn" class="clear-btn">Clear</button>

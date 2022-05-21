@@ -10,12 +10,47 @@
         min-width: 100%;
         flex: 0;
     }    
+
+    .crypto-info-table-block {
+        overflow: auto;
+	    position: relative;
+    }
+
+    .crypto-info-table th, .crypto-info-table td {
+        padding: 0 20px;
+    }
+
+    .crypto-info-table {
+        display: inline-block;
+        vertical-align: top;
+        max-width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .crypto-info-table::-webkit-scrollbar {
+        width: 6px;
+        height: 8px;             /* ширина всей полосы прокрутки */
+    }
+      
+    .crypto-info-table::-webkit-scrollbar-track {
+        background: rgb(136, 135, 133);        /* цвет зоны отслеживания */
+    }
+      
+    .crypto-info-table::-webkit-scrollbar-thumb {
+        background-color: rgb(98, 98, 128);    /* цвет бегунка */
+        border-radius: 5px;       /* округлось бегунка */
+        /* border: 3px solid rgb(54, 51, 45);  отступ вокруг бегунка */
+    }
+
+
 }
 
 @media only screen and (max-width : 800px)  {
-    .symbol-coin, .changes, .crypto-info-table col {
+    /* .symbol-coin, .changes, .crypto-info-table col {
         display: none;
-    }
+    } */
 }
 
 @media only screen and (max-width : 600px)  {
@@ -39,6 +74,14 @@
         width: 80%;
     }
 }
+
+@media only screen and (max-width : 533px)  {
+    .login-btn-container {
+        top: -3px;
+        right: 8px;
+    }
+}
+
 
 @media only screen and (max-width : 360px)  {
     .saidbar {

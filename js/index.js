@@ -68,7 +68,6 @@ const cryptoStatSPA = (function() {
         let dataSets = [];
         const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        // const loader = '<div class="loader"></div>';
         const localChartData = {};
         // pie Char Market Cup
         let chartTopMarketCup = null;
@@ -81,6 +80,7 @@ const cryptoStatSPA = (function() {
         let createdChartChanges = false;
         const invalidMessageLogin = 'Invalid email or password';
         const invalidMessageSingUp = 'Invalid email';
+        const invalidMessagePasswordLogin = 'The password has to be min 7 characters!';
 
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -179,8 +179,6 @@ const cryptoStatSPA = (function() {
             '<img src="./img/table_icons/arrow-down.svg" alt="arrow-down">';
         };
 
-        // const isLoader = num => !num ? loader : num;
-
         this.buildTable = function(dataTable, countCoinsInTable, startCountCoinsInTable) {
             if (dataTable) {
                 mydataTable = dataTable;
@@ -188,14 +186,16 @@ const cryptoStatSPA = (function() {
                 mystartCountCoinsInTable = startCountCoinsInTable;
 
                 let dataTableStr = `
-                    <col width="40"></col>
-                    <col width="50"></col>
-                    <col width="160"></col>
-                    <col width="80"></col>
-                    <col width="120"></col>
-                    <col width="90"></col>
-                    <col width="90"></col>
-                    <col width="90"></col>
+                    <colgroup>
+                        <col width="50"></col>
+                        <col width="50"></col>
+                        <col width="160"></col>
+                        <col width="80"></col>
+                        <col width="150"></col>
+                        <col width="90"></col>
+                        <col width="90"></col>
+                        <col width="90"></col>
+                    </colgroup>
                     <thead>
                         <tr>
                             <th></th>
@@ -457,6 +457,7 @@ const cryptoStatSPA = (function() {
         this.createPieChartTopMarketCup = function (marketCupArr, nameCoinsArr, typeChart) {
             myMarketCupArr = marketCupArr;
             mynameCoinsArr = nameCoinsArr;
+            
 
             chartTopMarketCup = myModuleContainer.querySelector('#market-cup-chart');
 
@@ -500,6 +501,7 @@ const cryptoStatSPA = (function() {
                 }
             };
 
+            this.toggleLoader(false);
             const marketCupChart = new Chart(chartTopMarketCup, config);
         };
 
@@ -520,9 +522,21 @@ const cryptoStatSPA = (function() {
         this.buildTableForStatisticData = function(dataForTable) {
             const tableStatisticData = myModuleContainer.querySelector('#coin-stat-table');
 
+            const numberWithCommas = num => {
+                if (num !== null) {
+                    let parts = num.toString().split(".");
+                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    return parts.join(".");
+                } else {
+                    return 'no data';
+                }
+            };
+
             tableStatisticData.innerHTML = `
-                <col width="250"></col>
-                <col width="250"></col>
+                <colgroup>
+                    <col width="250"></col>
+                    <col width="250"></col>
+                </colgroup>
                 <caption class="coin-stat_title">Statistic prices(${dataForTable.currency.toUpperCase()})</caption>
                 <thead>
                     <tr>
@@ -533,11 +547,11 @@ const cryptoStatSPA = (function() {
                 <tbody>
                     <tr>
                         <td>Current price</td>
-                        <td class="table-value">${dataForTable.currentPrice}</td>
+                        <td class="table-value">${numberWithCommas(dataForTable.currentPrice)}</td>
                     </tr>
                     <tr>
                         <td>Change price 24h</td>
-                        <td class="table-value">${dataForTable.priceChange24h.toFixed(2)}<br />${addArrow(dataForTable.priceChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.priceChange24hPercentage.toFixed(2))}%</td>
+                        <td class="table-value">${dataForTable.priceChange24h.toFixed(5)}<br />${addArrow(dataForTable.priceChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.priceChange24hPercentage.toFixed(2))}%</td>
                     </tr>
                     <tr>
                         <td>24h min / 24h max</td>
@@ -545,34 +559,33 @@ const cryptoStatSPA = (function() {
                     </tr>
                     <tr>
                         <td>Market cap change 24h</td>
-                        <td class="table-value">${dataForTable.marketCapChange24h.toFixed(2)}<br />${addArrow(dataForTable.marketCapChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.marketCapChange24hPercentage.toFixed(2))}%</td>
+                        <td class="table-value">${numberWithCommas(dataForTable.marketCapChange24h.toFixed(2))}<br />${addArrow(dataForTable.marketCapChange24hPercentage.toFixed(2))} ${Math.abs(dataForTable.marketCapChange24hPercentage.toFixed(2))}%</td>
                     </tr>
                     <tr>
                         <td>Total volume</td>
-                        <td class="table-value">${dataForTable.totalVolume}</td>
+                        <td class="table-value">${numberWithCommas(dataForTable.totalVolume)}</td>
                     </tr>
                     <tr>
                         <td>Circulating supply</td>
-                        <td class="table-value">${dataForTable.circulatingSupply}</td>
+                        <td class="table-value">${(numberWithCommas(dataForTable.circulatingSupply))}</td>
                     </tr>
                     <tr>
                         <td>Total supply</td>
-                        <td class="table-value">${dataForTable.totalSupply}</td>
+                        <td class="table-value">${numberWithCommas(dataForTable.totalSupply)}</td>
                     </tr>
                     <tr>
                         <td>Max supply</td>
-                        <td class="table-value">${dataForTable.maxSupply}</td>
+                        <td class="table-value">${numberWithCommas(dataForTable.maxSupply)}</td>
                     </tr>
                     <tr>
                         <td>Market cap rank</td>
-                        <td class="table-value">${dataForTable.marketCapRank}</td>
+                        <td class="table-value">${numberWithCommas(dataForTable.marketCapRank)}</td>
                     </tr>
                 </tbody>
             `;
         };
 
         this.createChartChangeMarketCap = function(marketCapsObj, currency, id, myTypeChart) {
-
             if (!createdChartChanges) {
                 let nameChart = defaultNameChart;
 
@@ -704,6 +717,40 @@ const cryptoStatSPA = (function() {
                 myModuleContainer.querySelector('#invalid-message-singUp').innerHTML = invalidMessageSingUp;
             }
         };
+
+        this.updateInvalidPasswordMessageLogin = function(countSymbols) {
+            if (countSymbols < 7) {
+                myModuleContainer.querySelector('#invalid-message-login').innerHTML = invalidMessagePasswordLogin;
+            } else {
+                myModuleContainer.querySelector('#invalid-message-login').innerHTML = '';
+            }
+        };
+
+        this.updateInvalidPasswordMessageSingUp = function(countSymbols) {
+            if (countSymbols < 7) {
+                myModuleContainer.querySelector('#invalid-message-singUp').innerHTML = invalidMessagePasswordLogin;
+            } else {
+                myModuleContainer.querySelector('#invalid-message-singUp').innerHTML = '';
+            }
+        };
+
+        const createLoader = () => {
+            const loader = document.createElement('div');
+            loader.classList.add('loader');
+            loader.id = 'loader';
+
+            return loader;
+        };
+
+        this.toggleLoader = function(stateRequest) {
+            const chartTop10Block = myModuleContainer.querySelector('#market-cup-chart-block');
+
+            if (stateRequest) {
+                chartTop10Block.append(createLoader());
+            } else {
+                chartTop10Block.querySelector('#loader').remove();
+            }
+        };
     }
 
     function ModuleModel() {
@@ -747,18 +794,18 @@ const cryptoStatSPA = (function() {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     const userId = auth.currentUser.uid;
-                    isLogin = true;
+                    isLogin = null;
 
                     return onValue(ref(database, '/users/' + userId), (snapshot) => {
                     const username = (snapshot.val() && snapshot.val().name) || 'Anonymous';
                     myModuleView.changeStatus(snapshot.val().name);
                     }, {onlyOnce: true});
                 } else {
-                    if (isLogin) {
+                    if (!isLogin) {
                         myModuleView.toggleLoginForm();
                     }
 
-                    isLogin = null;
+                    isLogin = true;
                 }
             });
         };
@@ -1030,6 +1077,9 @@ const cryptoStatSPA = (function() {
 
         this.getTop10Data = function(currency) {
             const myCurrency = !currency ? dafaulCurrency : currency;
+            //show Loader
+            myModuleView.toggleLoader(true);
+
             // top 10
             fetch(`${api}/v3/coins/markets?vs_currency=${myCurrency}&order=market_cap_desc&per_page=${topMarketCup}&page=1&sparkline=false`)
             .then(response => response.json())
@@ -1255,6 +1305,14 @@ const cryptoStatSPA = (function() {
                 myModuleView.updateDisabledLoginFormBtn(false);
             }
         };
+
+        this.checkValidLoginPassword = function(inputPasswordLoginValue) {
+            myModuleView.updateInvalidPasswordMessageLogin(inputPasswordLoginValue.length);
+        };
+
+        this.checkValidSingUpPassword = function(inputPasswordSingUpValue) {
+            myModuleView.updateInvalidPasswordMessageSingUp(inputPasswordSingUpValue.length);
+        };
     }
 
     function ModuleController() {
@@ -1406,6 +1464,7 @@ const cryptoStatSPA = (function() {
 
             if (event.target.id === 'password-login') {
                 myModuleModel.checkDisabledLoginFormBtn(inputEmailLogin.value, inputPasswordLogin.value);
+                myModuleModel.checkValidLoginPassword(inputPasswordLogin.value);
             }
 
             if (event.target.id === 'email-singUp') {
@@ -1414,6 +1473,7 @@ const cryptoStatSPA = (function() {
 
             if (event.target.id === 'password-singUp') {
                 myModuleModel.checkDisabledSingUpFormBtn(inputEmailSingUp.value, inputPasswordSingUp.value, inputUserName.value);
+                myModuleModel.checkValidSingUpPassword(inputPasswordSingUp.value);
             }
 
             if (event.target.id === 'userName-input') {
