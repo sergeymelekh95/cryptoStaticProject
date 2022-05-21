@@ -58,8 +58,8 @@ const Saidbar = {
         <div class="saidbar ${customClass}">
             <div class="logo">
                 <a class="logo__link" href="#main">
-                    <img src="./img/logo_icons/logo_1.svg" alt="logo">
-                    <img src="./img/logo_icons/logo_2.svg" alt="logo">
+                    <img class="logo_1" src="./img/logo_icons/logo_1.svg" alt="logo">
+                    <img class="logo_2" src="./img/logo_icons/logo_2.svg" alt="logo">
                 </a>
             </div>
             <nav class="mainmenu" id="mainmenu">

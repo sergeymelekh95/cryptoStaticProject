@@ -46,8 +46,8 @@ body {
 
 .logo__link img:last-child {
     position: absolute;
-    left: -1px;
-    top: -2px;
+    left: 0px;
+    top: 0px;
 }
 
 .mainmenu {
@@ -636,7 +636,34 @@ padding: .6em .8em .5em 1.4em;
 
 
 
+.logo_1 {
+    position: relative;
+    animation: jumpLogo1 1s infinite alternate-reverse;
+}
 
+.logo_2 {
+    animation: jumpLogo2 1s infinite alternate-reverse;
+}
+
+@keyframes jumpLogo1 {
+    0% {
+        top: -1px;
+    }
+
+    100% {
+        top: 3px;
+    }
+}
+
+@keyframes jumpLogo2 {
+    0% {
+        top: 1px;
+    }
+
+    100% {
+        top: -3px;
+    }
+}
 
 
 .loader {
