@@ -748,7 +748,9 @@ const cryptoStatSPA = (function() {
             if (stateRequest) {
                 chartTop10Block.append(createLoader());
             } else {
-                chartTop10Block.querySelector('#loader').remove();
+                if (chartTop10Block.querySelector('#loader')) {
+                    chartTop10Block.querySelector('#loader').remove();
+                }
             }
         };
     }
