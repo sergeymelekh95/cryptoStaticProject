@@ -739,6 +739,7 @@ const cryptoStatSPA = (function() {
             if (typeForm === 'singUp') {
                 myModuleContainer.querySelector('#email-singUp').value = '';
                 myModuleContainer.querySelector('#password-singUp').value = '';
+                myModuleContainer.querySelector('#userName-input').value = '';
             }
         };
     
@@ -825,6 +826,12 @@ const cryptoStatSPA = (function() {
                     toggleLoader(ownTableBlock, stateRequest);
                 }
             }, 0);
+        };
+
+        this.soundClick = function() {
+            const audio = new Audio();
+            audio.src = './audio/click-sound.mp3';
+            audio.autoplay = true;
         };
     }
 
@@ -1323,6 +1330,16 @@ const cryptoStatSPA = (function() {
                     myModuleView.updateDisabledSingUpFormBtn(false);
                 });
         };
+
+        this.clearForm = function(nameForm) {
+            if (nameForm === 'login') {
+                myModuleView.clearForm('login');
+            }
+
+            if (nameForm === 'singUp') {
+                myModuleView.clearForm('singUp');
+            }
+        };
  
         this.login = function(inputEmailLoginValue, inputPasswordLoginValue) {
             signInWithEmailAndPassword(auth, inputEmailLoginValue, inputPasswordLoginValue)
@@ -1392,6 +1409,10 @@ const cryptoStatSPA = (function() {
 
         this.checkValidSingUpPassword = function(inputPasswordSingUpValue) {
             myModuleView.updateInvalidPasswordMessageSingUp(inputPasswordSingUpValue.length);
+        };
+
+        this.soundClick = function() {
+            myModuleView.soundClick();
         };
     }
 
@@ -1499,6 +1520,7 @@ const cryptoStatSPA = (function() {
             if (event.target.id === 'clear-btn') {
                 checkedId = [];
                 myModuleModel.clearChart();
+                myModuleModel.soundClick();
             }
 
             if (event.target.classList.contains('link_info')) {
@@ -1508,11 +1530,13 @@ const cryptoStatSPA = (function() {
             if (event.target.id === 'change-login-form-btn') {
                 myModuleModel.toggleSingUpForm();
                 myModuleModel.toggleLoginForm();
+                myModuleModel.clearForm('login');
             }
 
             if (event.target.id === 'change-singUp-form-btn') {
                 myModuleModel.toggleLoginForm();
                 myModuleModel.toggleSingUpForm();
+                myModuleModel.clearForm('singUp');
             }
 
             if (event.target.id === 'singUp-btn') {

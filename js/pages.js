@@ -9,7 +9,7 @@ const HomePage = {
                     <option value="hour">Last hour</option>
                     <option value="day">Last 24h</option>
                     <option value="week">Last 7d</option>
-                    <option value="month">Last mouth</option>
+                    <option value="month">Last month</option>
                     <option value="year">Last year</option>
                 </select>
             </div>
@@ -140,7 +140,7 @@ const AboutPage = {
                     <li>
                         <p>Can I use the project from mobile devices?</p>
                         <p>
-                            Yes, that the web application adaptively and automatically adjusts to the available screen sizes and adequately displays information.
+                            Yes, the web application adaptively and automatically adjusts to the available screen sizes and adequately displays information.
                         </p>
                     </li>
                 </ul>
