@@ -5,13 +5,13 @@
     }
 
     .market-cap-block {
-        min-width: 100%;
         flex: 0;
+        min-width: 100%;
     }    
 
     .crypto-info-table-block {
-        overflow: auto;
 	    position: relative;
+        overflow: auto;
     }
 
     .crypto-info-table th, .crypto-info-table td {
@@ -20,8 +20,8 @@
 
     .crypto-info-table {
         display: inline-block;
-        vertical-align: top;
         max-width: 100%;
+        vertical-align: top;
         overflow-x: auto;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
@@ -29,27 +29,20 @@
 
     .crypto-info-table::-webkit-scrollbar {
         width: 6px;
-        height: 8px;             /* ширина всей полосы прокрутки */
+        height: 8px; /* ширина всей полосы прокрутки */
     }
       
     .crypto-info-table::-webkit-scrollbar-track {
-        background: rgb(136, 135, 133);        /* цвет зоны отслеживания */
+        background: rgb(136, 135, 133); /* цвет зоны отслеживания */
     }
       
     .crypto-info-table::-webkit-scrollbar-thumb {
-        background-color: rgb(98, 98, 128);    /* цвет бегунка */
-        border-radius: 5px;       /* округлось бегунка */
-        /* border: 3px solid rgb(54, 51, 45);  отступ вокруг бегунка */
+        background-color: rgb(75, 75, 88); /* цвет бегунка */
+        border-radius: 5px; /* округлось бегунка */
     }
-
-
 }
 
 @media only screen and (max-width : 800px)  {
-    /* .symbol-coin, .changes, .crypto-info-table col {
-        display: none;
-    } */
-
     .about__title_list {
         margin: 50px 0 20px 0;
         text-align: start;

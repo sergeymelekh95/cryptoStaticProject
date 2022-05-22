@@ -1,14 +1,11 @@
 "use strict";
-// Import the functions you need from the SDKs you need
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js";
 import { getDatabase, set, ref, update, onValue  } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-database.js";
 
 export default createUserWithEmailAndPassword;
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDfMFCaBUJZzS0IzQhytp-1LKqw82dYmcc",
     authDomain: "crypto-stat-app.firebaseapp.com",
@@ -58,18 +55,7 @@ const cryptoStatSPA = (function() {
         let chart = null;
         let myChart = null;
         let myTimeArr = null;
-        let backgroundColors = ['rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)','rgba(153, 102, 255, 0.6)','rgba(255, 159, 64, 0.6)','#7AD36E','#DBE2DB','#A09E04','#F47FF7','#78FDC7','#A38451', '#994499', '#3366cc', '#316395', '#b82e2e', '#66aa00', '#dd4477', '#0099c6', '#990099', '#109618', '#ff9900', '#dc3912', '#3366cc', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)'];
-        const defaultDataSet = [{
-            label: 'Select coins in the table below',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: [],
-        }];
-        let dataSets = [];
-        const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const localChartData = {};
-        // pie Char Market Cup
         let chartTopMarketCup = null;
         const barChart = 'bar';
         const pieChart = 'pie';
@@ -81,6 +67,16 @@ const cryptoStatSPA = (function() {
         const invalidMessageLogin = 'Invalid email or password';
         const invalidMessageSingUp = 'Invalid email';
         const invalidMessagePasswordLogin = 'The password has to be min 7 characters!';
+        const defaultDataSet = [{
+            label: 'Select coins in the table below',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [],
+        }];
+        let backgroundColors = ['rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)','rgba(153, 102, 255, 0.6)','rgba(255, 159, 64, 0.6)','#7AD36E','#DBE2DB','#A09E04','#F47FF7','#78FDC7','#A38451', '#994499', '#3366cc', '#316395', '#b82e2e', '#66aa00', '#dd4477', '#0099c6', '#990099', '#109618', '#ff9900', '#dc3912', '#3366cc', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)'];
+        let dataSets = [];
+        const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     
         this.init = function(container, routes) {
             myModuleContainer = container;
@@ -216,7 +212,7 @@ const cryptoStatSPA = (function() {
                         <tr>
                             <td class="checkbox-table"><input type="checkbox" class="checkbox table-checkbox" id="${mydataTable[i].id}" name="${mydataTable[i].nameCoin}"></td>
                             <td><img class="label-coin" src="${mydataTable[i].image}" alt="label_coin"></td>
-                            <td class="name-coin"><a href="#info" data-id="${mydataTable[i].id}" class="link_info">${mydataTable[i].number}. ${mydataTable[i].nameCoin}</a></td>
+                            <td class="name-coin"><a href="#info" data-name="${mydataTable[i].nameCoin}" data-id="${mydataTable[i].id}" class="link_info">${mydataTable[i].number}. ${mydataTable[i].nameCoin}</a></td>
                             <td class="symbol-coin">${mydataTable[i].symbol}</td>
                             <td class="price-coin">${mydataTable[i].currentPrice}</td>
                             <td class="changes"> ${addArrow(mydataTable[i].changePercentageOneHour)} ${Math.abs(mydataTable[i].changePercentageOneHour)} %</td>
@@ -474,7 +470,7 @@ const cryptoStatSPA = (function() {
             this.removeDataSet();
         };
     
-        this.createPieChartTopMarketCup = function (marketCupArr, nameCoinsArr, typeChart) {
+        this.createChartTopMarketCup = function (marketCupArr, nameCoinsArr, typeChart) {
             myMarketCupArr = marketCupArr;
             mynameCoinsArr = nameCoinsArr;
             
@@ -546,7 +542,7 @@ const cryptoStatSPA = (function() {
             newMarketCapChart.classList.add('market-cup-chart');
             marketCapChartBlock.append(newMarketCapChart);
     
-            this.createPieChartTopMarketCup(myMarketCupArr, mynameCoinsArr, state ? pieChart : barChart);
+            this.createChartTopMarketCup(myMarketCupArr, mynameCoinsArr, state ? pieChart : barChart);
         };
     
         this.buildTableForStatisticData = function(dataForTable) {
@@ -617,7 +613,7 @@ const cryptoStatSPA = (function() {
             `;
         };
     
-        this.createChartChangeMarketCap = function(marketCapsObj, currency, id, myTypeChart) {
+        this.createChartChangeMarketCap = function(marketCapsObj, currency, id, nameCoin, myTypeChart) {
             if (!createdChartChanges) {
                 let nameChart = defaultNameChart;
     
@@ -634,7 +630,7 @@ const cryptoStatSPA = (function() {
                 const data = {
                     labels: labels,
                     datasets: [{
-                        label: `${id} change ${nameChart}`,
+                        label: `${nameCoin} ${nameChart}`,
                         backgroundColor: 'rgba(75, 192, 192, 0.6)',
                         borderColor: 'rgba(75, 192, 192, 0.6)',
                         data: marketCapsObj.valueArr,
@@ -650,7 +646,7 @@ const cryptoStatSPA = (function() {
                         plugins: {
                             title: {
                                 display: true,
-                                text: `History change ${id} ${nameChart} ${marketCapsObj.timeArr[0]} - ${marketCapsObj.timeArr[marketCapsObj.timeArr.length - 1]}`,
+                                text: `History of changes ${marketCapsObj.timeArr[0]} - ${marketCapsObj.timeArr[marketCapsObj.timeArr.length - 1]}`,
                                 font: {
                                     size: 16
                                 },
@@ -696,12 +692,11 @@ const cryptoStatSPA = (function() {
                 createdChartChanges = true;
     
             } else {
-                this.updatecreateChartsChanges(marketCapsObj, currency, id, myTypeChart);
+                this.updatecreateChartsChanges(marketCapsObj, currency, id, nameCoin, myTypeChart);
             }
-    
         };
     
-        this.updatecreateChartsChanges = function (marketCapsObj, currency, id, myTypeChart) {
+        this.updatecreateChartsChanges = function (marketCapsObj, currency, id, nameCoin, myTypeChart) {
             createdChartChanges = false;
             myModuleContainer.querySelector('#change-market-cup-chart').remove();
             const canvas = document.createElement('canvas');
@@ -710,7 +705,7 @@ const cryptoStatSPA = (function() {
             const parent = myModuleContainer.querySelector('#chart-statistics-block');
             parent.append(canvas);
     
-            this.createChartChangeMarketCap(marketCapsObj, currency, id, myTypeChart);
+            this.createChartChangeMarketCap(marketCapsObj, currency, id, nameCoin, myTypeChart);
         };
     
         this.toggleSingUpForm = function() {
@@ -794,60 +789,40 @@ const cryptoStatSPA = (function() {
         };
     
         this.toggleLoader = function(stateRequest, nameBlock) {
+            const toggleLoader = (element, state) => {
+                if (state) {
+                    element.append(createLoader());
+                } else {
+                    if (element.querySelector('#loader')) {
+                        element.querySelector('#loader').remove();
+                    }
+                }
+            };
+
             setTimeout(() => {
                 if (nameBlock === 'chartTop10') {
                     const chartTop10Block = myModuleContainer.querySelector('#market-cup-chart-block');
-                    if (stateRequest) {
-                        chartTop10Block.append(createLoader());
-                    } else {
-                        if (chartTop10Block.querySelector('#loader')) {
-                            chartTop10Block.querySelector('#loader').remove();
-                        }
-                    }
+                    toggleLoader(chartTop10Block, stateRequest);
                 }
     
                 if (nameBlock === 'historycsChart') {
                     const historycsChartBlock = myModuleContainer.querySelector('#chart-statistics-block');
-                    if (stateRequest) {
-                        historycsChartBlock.append(createLoader());
-                    } else {
-                        if (historycsChartBlock.querySelector('#loader')) {
-                            historycsChartBlock.querySelector('#loader').remove();
-                        }
-                    }
+                    toggleLoader(historycsChartBlock, stateRequest);
                 }
     
                 if (nameBlock === 'coinInfoTable') {
                     const coinInfoTableBlock = myModuleContainer.querySelector('#coin-info-table-block');
-                    if (stateRequest) {
-                        coinInfoTableBlock.append(createLoader());
-                    } else {
-                        if (coinInfoTableBlock.querySelector('#loader')) {
-                            coinInfoTableBlock.querySelector('#loader').remove();
-                        }
-                    }
+                    toggleLoader(coinInfoTableBlock, stateRequest);
                 }
     
                 if (nameBlock === 'ownChart') {
                     const ownChartBlock = myModuleContainer.querySelector('#chart-block');
-                    if (stateRequest) {
-                        ownChartBlock.append(createLoader());
-                    } else {
-                        if (ownChartBlock.querySelector('#loader')) {
-                            ownChartBlock.querySelector('#loader').remove();
-                        }
-                    }
+                    toggleLoader(ownChartBlock, stateRequest);
                 }
     
                 if (nameBlock === 'ownTable') {
                     const ownTableBlock = myModuleContainer.querySelector('#crypto-info-table-block');
-                    if (stateRequest) {
-                        ownTableBlock.append(createLoader());
-                    } else {
-                        if (ownTableBlock.querySelector('#loader')) {
-                            ownTableBlock.querySelector('#loader').remove();
-                        }
-                    }
+                    toggleLoader(ownTableBlock, stateRequest);
                 }
             }, 0);
         };
@@ -870,10 +845,12 @@ const cryptoStatSPA = (function() {
         let gotStatisticData = null;
         const defaultCoinId = 'bitcoin';
         const defaultTypeChart = 'market-cap';
+        let defaultNameCoin = 'Bitcoin';
         let isLogin = null;
         let myId = null;
         let myCurrency = null;
         let myTypeChart = null;
+        let myNameCoin = null;
 
         this.init = function(view) {
             myModuleView = view;
@@ -960,7 +937,6 @@ const cryptoStatSPA = (function() {
 
         this.buildSelectCurrencies = function(arr) {
             supportedCurrencies = arr;
-
             myModuleView.buildSelectCurrencies(supportedCurrencies);
         };
 
@@ -975,7 +951,8 @@ const cryptoStatSPA = (function() {
             .catch(error => myModuleView.renderContent('error'));
         };
 
-        const checkValidNum = num => !num ? num : num.toFixed(1);
+        const checkValidNum = num => !num ? num : num.toFixed(2);
+        const checkValidPrice = num => !num ? num : num;
 
         this.parseDataForTable = function(data) {
             dataTable = [];
@@ -983,7 +960,7 @@ const cryptoStatSPA = (function() {
             for(let i = 0; i < data.length; ++i) {
                 const id = data[i].id;
                 const nameCoin = data[i].name;
-                const currentPrice = checkValidNum(data[i].current_price);
+                const currentPrice = checkValidPrice(data[i].current_price);
                 const changePercentageOneHour = checkValidNum(data[i].price_change_percentage_1h_in_currency);
                 const changePercentageOneWeek = checkValidNum(data[i].price_change_percentage_7d_in_currency);
                 const changePercentageOneDay = checkValidNum(data[i].price_change_percentage_24h_in_currency);
@@ -1192,22 +1169,24 @@ const cryptoStatSPA = (function() {
             .catch(error => myModuleView.renderContent('error'));
         };
 
-        this.setLocalDataTableStatistic = function(currency, id, typeChart) {
+        this.setLocalDataTableStatistic = function(currency, id, name, typeChart) {
             const obj = {
                 currency,
                 id,
+                name,
                 typeChart
             };
             window.sessionStorage.setItem('localDataTableStatistic', JSON.stringify(obj));
         };
 
-        this.getStatisticData = function(currency, id, typeChart) {
+        this.getStatisticData = function(currency, id, name, typeChart) {
             gotStatisticData = true;
             myId = !id ? defaultCoinId : id;
             myCurrency = !currency ? dafaulCurrency : currency;
             myTypeChart = !typeChart ? defaultTypeChart : typeChart;
+            myNameCoin = !name ? defaultNameCoin : name;
 
-            this.setLocalDataTableStatistic(myCurrency, myId, myTypeChart);
+            this.setLocalDataTableStatistic(myCurrency, myId, myNameCoin, myTypeChart);
 
             //for table statistic
             myModuleView.toggleLoader(true, 'coinInfoTable');
@@ -1220,17 +1199,18 @@ const cryptoStatSPA = (function() {
             myModuleView.toggleLoader(true, 'historycsChart');
             fetch(`${api}/v3/coins/${myId}/market_chart?vs_currency=${myCurrency}&days=max&interval=daily`)
             .then(response => response.json())
-            .then(data => this.parseHistoricalDataForCharts(data, currency, id, myTypeChart))
+            .then(data => this.parseHistoricalDataForCharts(data, currency, id, name, myTypeChart))
             .catch(error => myModuleView.renderContent('error'));
         };
 
         this.updateTypeChart = function(typeChart) {
-            this.getStatisticData(myCurrency, myId, typeChart);
+            this.getStatisticData(myCurrency, myId, myNameCoin, typeChart);
         };
 
-        this.parseHistoricalDataForCharts = function(data, currency, id, myTypeChart) {
+        this.parseHistoricalDataForCharts = function(data, currency, id, name, myTypeChart) {
             myId = !id ? defaultCoinId : id;
             myCurrency = !currency ? dafaulCurrency : currency;
+            myNameCoin = !name ? defaultNameCoin : name;
 
             const marketCapsArr = data.market_caps;
             const pricesArr = data.prices;
@@ -1252,11 +1232,11 @@ const cryptoStatSPA = (function() {
             };
 
             if (myTypeChart === 'market-cap') {
-                myModuleView.createChartChangeMarketCap(createArraysForCharts(marketCapsArr), myCurrency, myId, myTypeChart);
+                myModuleView.createChartChangeMarketCap(createArraysForCharts(marketCapsArr), myCurrency, myId, myNameCoin, myTypeChart);
             } else if (myTypeChart === 'prices') {
-                myModuleView.createChartChangeMarketCap(createArraysForCharts(pricesArr), myCurrency, myId, myTypeChart);
+                myModuleView.createChartChangeMarketCap(createArraysForCharts(pricesArr), myCurrency, myId, myNameCoin, myTypeChart);
             } else {
-                myModuleView.createChartChangeMarketCap(createArraysForCharts(totalVolumes), myCurrency, myId, myTypeChart);
+                myModuleView.createChartChangeMarketCap(createArraysForCharts(totalVolumes), myCurrency, myId, myNameCoin, myTypeChart);
             }
         };
 
@@ -1273,7 +1253,7 @@ const cryptoStatSPA = (function() {
                 myModuleView.updateTopMarketChart();
             } else {
                 gotDataTopMarketCupData = true;
-                myModuleView.createPieChartTopMarketCup(marketCupArr, nameCoinsArr);
+                myModuleView.createChartTopMarketCup(marketCupArr, nameCoinsArr);
             }
         };
 
@@ -1306,8 +1286,9 @@ const cryptoStatSPA = (function() {
         this.getLocalDataTableStatistic = function() {
             const parseDataCurrency = JSON.parse(window.sessionStorage.localDataTableStatistic).currency;
             const parseDataId = JSON.parse(window.sessionStorage.localDataTableStatistic).id;
+            const parseDataNameCoin = JSON.parse(window.sessionStorage.localDataTableStatistic).name;
 
-            this.getStatisticData(parseDataCurrency, parseDataId);
+            this.getStatisticData(parseDataCurrency, parseDataId, parseDataNameCoin);
         };
 
         this.toggleTopMarketChart = function(state) {
@@ -1333,14 +1314,11 @@ const cryptoStatSPA = (function() {
                         name: inputUserNameValue
                     })
                     .then(() => {
-                        // Data saved successfully!
                         myModuleView.clearForm('singUp');
                         myModuleView.toggleSingUpForm();
                     });
                 })
                 .catch((error) => {
-                    // const errorCode = error.code;
-                    // const errorMessage = error.message;
                     myModuleView.showInvalidMessage('singUp');
                     myModuleView.updateDisabledSingUpFormBtn(false);
                 });
@@ -1352,15 +1330,11 @@ const cryptoStatSPA = (function() {
                 const user = userCredential.user;
                 const lgDate = new Date();
                 //обновляем дату последнего входа
-                //перенаправить на about
                 update(ref(database, 'users/' + user.uid), {
                     last_login: lgDate,
                 })
                 .then(() => {
-                    // Data saved successfully!
                     myModuleView.clearForm('login');
-                    // myModuleView.toggleLoginForm();
-                    // myModuleView.changeStatus(user.email);
                     this.checkAccessRights();
                     myModuleView.toggleLoginForm();
                 });
@@ -1377,7 +1351,6 @@ const cryptoStatSPA = (function() {
         this.singOut = function() {
             signOut(auth).then(() => {
                 myModuleView.changeStatus('');
-                // myModuleView.toggleLoginForm();
             }).catch((error) => {});
         };
 
@@ -1428,7 +1401,6 @@ const cryptoStatSPA = (function() {
         let checkedId = [];
         let checkedNameCoin = [];
         let currencySelect = null;
-        // let currencySelectValue = null;
         let periodSelect = null;
         let selectPeriodValue = null;
         let inputEmailSingUp = null;
@@ -1442,7 +1414,6 @@ const cryptoStatSPA = (function() {
             myModuleModel = model;
             checkedId = window.sessionStorage.localData ? JSON.parse(window.sessionStorage.localData).checkedId : [];
 
-            // вешаем слушателей на событие hashchange и кликам по пунктам меню
             window.addEventListener("hashchange", this.updateState);
             this.updateState(); //первая отрисовка
 
@@ -1472,7 +1443,7 @@ const cryptoStatSPA = (function() {
                     checkedId.push(event.target.id);
                     checkedNameCoin.push(event.target.name);
                     
-                    myModuleModel.addDataChart(checkedId,selectPeriodValue || periodSelect.value, checkedNameCoin);
+                    myModuleModel.addDataChart(checkedId, selectPeriodValue || periodSelect.value, checkedNameCoin);
                 } else {
                     myModuleModel.removeDataChart(event.target.id, event.target.name);
                     const i = checkedId.indexOf(event.target.id);
@@ -1487,12 +1458,11 @@ const cryptoStatSPA = (function() {
 
             if (event.target.id === 'period') {
                 selectPeriodValue = event.target.value;
-                //при изменении периода обновляем график и все данные в sessionStorage
 
                 checkedId = [];
                 checkedNameCoin = [];
                 myModuleModel.setLocalData(checkedId, currencySelect.value, checkedNameCoin, periodSelect.value);
-
+                //при изменении периода обновляю график и все данные в sessionStorage
                 myModuleModel.clearChart();
             }
 
@@ -1514,7 +1484,6 @@ const cryptoStatSPA = (function() {
                 selectPeriodValue = periodSelect.value;
 
                 currencySelect = myModuleContainer.querySelector('#currency-select');
-                // currencySelectValue = currencySelect.value;
             }
         };
 
@@ -1533,7 +1502,7 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.classList.contains('link_info')) {
-                myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
+                myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'), event.target.getAttribute('data-name'));
             }
 
             if (event.target.id === 'change-login-form-btn') {

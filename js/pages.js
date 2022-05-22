@@ -67,7 +67,7 @@ const CoinInfo = {
                         <select name="type-statistic" id="type-statistic" class="type-statistic select">
                             <option value="market-cap">Market cap</option>
                             <option value="prices">Prices</option>
-                            <option value="total-volume">Volume</option>
+                            <option value="total-volume">Total volume</option>
                         </select>
                     </div>
                     <div id="chart-statistics-block" class="chart-statistics-block change-market-cup-chart-block">
@@ -106,12 +106,12 @@ const AboutPage = {
                 </p>
                 <p class="about__title_list">Related Links:</p>
                 <ul class="about__list">
-                    <li>All Your crypto market data needs in One Place
+                    <li>All Your crypto data needs in One Place
                         <a href="#main">
                             <img src="./img/menu_icons/home_page.svg" alt="home_page_icon">
                         </a>.
                     </li>
-                    <li>We provide live and historic Crypto Charts for Free
+                    <li>We provide historic Crypto Charts for Free
                         <a href="#info">
                             <img src="./img/menu_icons/coin_info.svg" alt="coin_info">
                         </a>.
