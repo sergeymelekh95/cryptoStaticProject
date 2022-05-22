@@ -81,7 +81,7 @@ const cryptoStatSPA = (function() {
         const invalidMessageLogin = 'Invalid email or password';
         const invalidMessageSingUp = 'Invalid email';
         const invalidMessagePasswordLogin = 'The password has to be min 7 characters!';
-
+    
         this.init = function(container, routes) {
             myModuleContainer = container;
             routesObj = routes;
@@ -89,29 +89,29 @@ const cryptoStatSPA = (function() {
             contentContainer = myModuleContainer.querySelector("#content");
             header = myModuleContainer.querySelector("#header");
             headerTitle = myModuleContainer.querySelector(".title");
-
+    
             this.updateColors();
         };
-
+    
         this.updateSelectPeriod = function() {
             if (window.sessionStorage.localData) {
                 const value = JSON.parse(window.sessionStorage.localData).periodSelectValue;
-
+    
                 this.updatePeriodSelect(value);
             }
         };
-
+    
         this.updatePeriodSelect = function(value) {
             const periodSelect = myModuleContainer.querySelector('#period');
-
+    
             for (let i = 0; i < periodSelect.length; ++i) {
                 if (periodSelect[i].value === value) {
                     periodSelect[i].selected = true;
                 }
             }
-
+    
         };
-
+    
         this.updateColors = function() {
             if (window.sessionStorage.colorsLine) {
                 const parseColors = JSON.parse(window.sessionStorage.colorsLine);
@@ -120,7 +120,7 @@ const cryptoStatSPA = (function() {
                 }
             }
         };
-
+    
         this.addCheckbox = function() {
             if (window.sessionStorage.localData) {
                 const idsArr = JSON.parse(window.sessionStorage.localData).checkedId;
@@ -133,11 +133,11 @@ const cryptoStatSPA = (function() {
                 }
             }
         };
-
+    
         this.addCurrencyValue = function() {
             if (window.sessionStorage.localData) {
                 const value = JSON.parse(window.sessionStorage.localData).currencySelectValue;
-
+    
                 const currencySelect = document.querySelector('#currency-select').getElementsByTagName('option');
                 for (let i = 0; i < currencySelect.length; ++i) {
                     if (currencySelect[i].value === value) {
@@ -147,44 +147,44 @@ const cryptoStatSPA = (function() {
                 
             }
         };
-
+    
         this.renderContent = function(hashPageName, countCoinsInRequest) {
             routeName = "default";
-
+    
             if (hashPageName.length > 0) {
                 routeName = hashPageName in routes ? hashPageName : "error";
             }
-
+    
             window.document.title = routesObj[routeName].title;
             contentContainer.innerHTML = routesObj[routeName].render(`${routeName}-page`);
-
+    
             if (location.hash.slice(1) === routes.main.id) {
                 this.buildTable(mydataTable, mycountCoinsInTable, mystartCountCoinsInTable);
                 this.buildSelectCurrencies(supportedCurrencies);
-
+    
                 if (mydataTable) {
                     this.addCheckbox();
                     this.addCurrencyValue();
                 }
-
+    
                 this.checkDisabledBtn(countCoinsInRequest);
             }
-
+    
             this.updateMenuButtons(routesObj[routeName].id);
         };
-
+    
         const addArrow = percent => {
             return percent > 0 ?
             '<img src="./img/table_icons/arrow-up.svg" alt="arrow-up">':
             '<img src="./img/table_icons/arrow-down.svg" alt="arrow-down">';
         };
-
+    
         this.buildTable = function(dataTable, countCoinsInTable, startCountCoinsInTable) {
             if (dataTable) {
                 mydataTable = dataTable;
                 mycountCoinsInTable = countCoinsInTable;
                 mystartCountCoinsInTable = startCountCoinsInTable;
-
+    
                 let dataTableStr = `
                     <colgroup>
                         <col width="50"></col>
@@ -210,7 +210,7 @@ const cryptoStatSPA = (function() {
                     </thead>
                     <tbody>
                 `;
-
+    
                 for(let i = startCountCoinsInTable; i < countCoinsInTable; ++i) {
                     dataTableStr += `
                         <tr>
@@ -224,14 +224,14 @@ const cryptoStatSPA = (function() {
                             <td class="changes">${addArrow(mydataTable[i].changePercentageOneWeek)} ${Math.abs(mydataTable[i].changePercentageOneWeek)} %</td>
                         </tr>`;
                 }
-
+    
                 dataTableStr += `</tbody>`;
                 this.toggleLoader(false, 'ownTable'); // loader off
                 contentContainer.querySelector('#crypto-info-table').innerHTML = dataTableStr;
-
+    
                 this.addCheckbox();
                 this.updateSelectPeriod();
-
+    
                 if (chart) {
                     this.updateChart();
                 } else {
@@ -241,19 +241,19 @@ const cryptoStatSPA = (function() {
                 }
             }
         };
-
+    
         this.updateDisableCheckboxes = function(state) {
             const checkboxes = contentContainer.querySelectorAll('.checkbox');
-
+    
             for (let i = 0; i < checkboxes.length; ++i) {
                 checkboxes[i].disabled = state;            
             }
         };
-
+    
         this.buildSelectCurrencies = function(arr) {
             if (arr) {
                 supportedCurrencies = arr;
-
+    
                 let options = '';
                 for(let i = 0; i < supportedCurrencies.length; ++i) {
                     if (supportedCurrencies[i] === defaultCurrency) {
@@ -267,7 +267,7 @@ const cryptoStatSPA = (function() {
                 this.addCurrencyValue();
             }
         };
-
+    
         this.updateChart = function(localChartData) {
             if (!localChartData) {
                 if (!chart) {
@@ -288,7 +288,7 @@ const cryptoStatSPA = (function() {
                 this.createChart();
             }
         };
-
+    
         class DataSet {
             constructor(data, nameCoin, color, id, tension) {
                 this.label = nameCoin;
@@ -299,29 +299,29 @@ const cryptoStatSPA = (function() {
                 this.tension = tension;
             }
         }
-
+    
         this.createDataSet = function(timeArr, priceArr, idArr, checkedNameCoinArr) {
             myTimeArr = timeArr;
             const nameCoin = checkedNameCoinArr[checkedNameCoinArr.length - 1];
-
+    
             dataSets.push(new DataSet(priceArr, nameCoin, backgroundColors[backgroundColors.length - 1], idArr[idArr.length - 1], myTension));
             //удаляю последний(выбранный) цвет для того что бы его потороно не ипосльзовать
             backgroundColors.pop();
             //обновляем каждый клик
             window.sessionStorage.setItem('colorsLine', JSON.stringify(backgroundColors));
-
+    
             this.updateChart();
-
+    
             localChartData.dataChart = dataSets;
             localChartData.timeData = myTimeArr;
             window.sessionStorage.setItem('localChartData', JSON.stringify(localChartData));
         };
-
+    
         this.removeDataSet = function(id, name) {
             if (!name) {
                 dataSets = [];
             }
-
+    
             //когда выключаем чекбокс вычитываем цвет линии и пушим цвет обратно в массив (чтобы все было попорядку и не повторялось)
             for (let i = 0; i < dataSets.length; ++i) {
                 if(dataSets[i].id === id) {
@@ -329,27 +329,27 @@ const cryptoStatSPA = (function() {
                 }  
             }
             window.sessionStorage.setItem('colorsLine', JSON.stringify(backgroundColors));
-
+    
             for(let i = 0; i < dataSets.length; ++i) {
                 if(dataSets[i].label === name) {
                     dataSets.splice(i, 1);
                 }
             }
-
+    
             if (dataSets.length === 0) {
                 myTimeArr = null;
             }
-
+    
             this.updateChart();
-
+    
             localChartData.dataChart = dataSets;
             localChartData.timeData = myTimeArr;
             window.sessionStorage.setItem('localChartData', JSON.stringify(localChartData));
         };
-
+    
         this.createChart = function() {
             const labels = !myTimeArr ? '' : myTimeArr;
-
+    
             const data = {
                 labels: labels,
                 datasets: !myTimeArr ? defaultDataSet : dataSets
@@ -382,7 +382,7 @@ const cryptoStatSPA = (function() {
                     }
                 }
             };
-
+    
             this.toggleLoader(false, 'ownChart');
             chart = document.getElementById('analytic-chart');
             myChart = new Chart(
@@ -390,79 +390,78 @@ const cryptoStatSPA = (function() {
                 config
             );
         };
-
+    
         this.renderHeader = function(hashPageName) {
             headerTitle.innerHTML = routesObj[routeName].title;
         };
-
+    
         this.updateMenuButtons = function(currentPage) {
             const menuLinks = menu.querySelectorAll(".mainmenu__link");
-
+    
             for (let link of menuLinks) {
                 currentPage === link.getAttribute("href").slice(1) ? link.classList.add("active") : link.classList.remove("active");
             }
         };
-
+    
         this.checkDisabledBtn = function(countCoinsInRequest) {
             mycountCoinsInRequest = countCoinsInRequest;
-
+    
             if (mycountCoinsInTable === mycountCoinsInRequest) {
                 this.updateStateNextBtn(true);
             }
-
+    
             if (mystartCountCoinsInTable === 0) {
                 this.updateStatePrevBtn(true);
             }
-
+    
         };
-
+    
         this.updateStateNextBtn = function(state) {
             myModuleContainer.querySelector('#next-btn').disabled = state;
         };
-
+    
         this.updateStatePrevBtn = function(state) {
             myModuleContainer.querySelector('#prev-btn').disabled = state;
         };
-
+    
         this.getWeekDays = function(numWeekDaysArr, priceArr, idArr, checkedNameCoin) {
             const weekDays = [];
-
+    
             for(let i = 0; i < numWeekDaysArr.length - 1; ++i) {
                 weekDays.push(week[numWeekDaysArr[i]]);
             }
             weekDays.push('Now');
-
+    
             this.createDataSet(weekDays, priceArr, idArr, checkedNameCoin);
         };
-
+    
         this.getMonths = function(numMonthArr, priceArr, idArr, checkedNameCoin) {
             const orderMonths = [];
-
+    
             for(let i = 0; i < numMonthArr.length; ++i) {
                 orderMonths.push(months[numMonthArr[i]]);
             }
             this.createDataSet(orderMonths, priceArr, idArr, checkedNameCoin);
         };
-
+    
         this.clearCheckbox = function() {
             const checkboxes = myModuleContainer.querySelectorAll('.checkbox');
-
+    
             for (let i = 0; i < checkboxes.length; ++i) {
                 checkboxes[i].checked = false;
             }
         };
-
+    
         this.clearChart = function() {
             this.removeDataSet();
         };
-
+    
         this.createPieChartTopMarketCup = function (marketCupArr, nameCoinsArr, typeChart) {
             myMarketCupArr = marketCupArr;
             mynameCoinsArr = nameCoinsArr;
             
-
             chartTopMarketCup = myModuleContainer.querySelector('#market-cup-chart');
-
+    
             const data = {
                 labels: mynameCoinsArr,
                 datasets: [{
@@ -475,7 +474,7 @@ const cryptoStatSPA = (function() {
                         'rgba(75, 192, 192, 0.6)',
                         'rgba(153, 102, 255, 0.6)',
                         'rgba(255, 159, 64, 0.6)',
-                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(255, 99, 132, 0.6)',//отсюда
                         'rgba(54, 162, 235, 0.6)',
                         'rgba(255, 206, 86, 0.6)',
                         'rgba(75, 192, 192, 0.6)',
@@ -502,28 +501,28 @@ const cryptoStatSPA = (function() {
                     },
                 }
             };
-
+    
             this.toggleLoader(false, 'chartTop10');
             const marketCupChart = new Chart(chartTopMarketCup, config);
         };
-
+    
         this.updateTopMarketChart = function(state) {
             const marketCapChart = myModuleContainer.querySelector('#market-cup-chart');
             const marketCapChartBlock = myModuleContainer.querySelector('#market-cup-chart-block');
             let typeChart = null;
-
+    
             marketCapChart.remove();
             const newMarketCapChart = document.createElement('canvas');
             newMarketCapChart.id = 'market-cup-chart';
             newMarketCapChart.classList.add('market-cup-chart');
             marketCapChartBlock.append(newMarketCapChart);
-
+    
             this.createPieChartTopMarketCup(myMarketCupArr, mynameCoinsArr, state ? pieChart : barChart);
         };
-
+    
         this.buildTableForStatisticData = function(dataForTable) {
             const tableStatisticData = myModuleContainer.querySelector('#coin-stat-table');
-
+    
             const numberWithCommas = num => {
                 if (num !== null) {
                     let parts = num.toString().split(".");
@@ -533,9 +532,9 @@ const cryptoStatSPA = (function() {
                     return 'no data';
                 }
             };
-
+    
             this.toggleLoader(false, 'coinInfoTable'); // loader off
-
+    
             tableStatisticData.innerHTML = `
                 <colgroup>
                     <col width="250"></col>
@@ -588,11 +587,11 @@ const cryptoStatSPA = (function() {
                 </tbody>
             `;
         };
-
+    
         this.createChartChangeMarketCap = function(marketCapsObj, currency, id, myTypeChart) {
             if (!createdChartChanges) {
                 let nameChart = defaultNameChart;
-
+    
                 if (myTypeChart === 'market-cap') {
                     nameChart = 'market cap';
                 } else if (myTypeChart === 'prices') {
@@ -600,7 +599,7 @@ const cryptoStatSPA = (function() {
                 } else {
                     nameChart = 'volume';
                 }
-
+    
                 const chartMarketCups = myModuleContainer.querySelector('#change-market-cup-chart');
                 const labels = marketCapsObj.timeArr;
                 const data = {
@@ -647,15 +646,15 @@ const cryptoStatSPA = (function() {
                     chartMarketCups,
                     config
                 );
-
+    
                 createdChartChanges = true;
-
+    
             } else {
                 this.updatecreateChartsChanges(marketCapsObj, currency, id, myTypeChart);
             }
-
+    
         };
-
+    
         this.updatecreateChartsChanges = function (marketCapsObj, currency, id, myTypeChart) {
             createdChartChanges = false;
             myModuleContainer.querySelector('#change-market-cup-chart').remove();
@@ -664,24 +663,24 @@ const cryptoStatSPA = (function() {
             canvas.classList.add('change-market-cup-chart');
             const parent = myModuleContainer.querySelector('#chart-statistics-block');
             parent.append(canvas);
-
+    
             this.createChartChangeMarketCap(marketCapsObj, currency, id, myTypeChart);
         };
-
+    
         this.toggleSingUpForm = function() {
             const formOverlay = myModuleContainer.querySelector('#form-overlay-singUp');
             formOverlay.classList.toggle('form_closed');
             
             this.toggleScroll(window.getComputedStyle(formOverlay).display);
         };
-
+    
         this.toggleLoginForm = function() {
             const formOverlay = myModuleContainer.querySelector('#form-overlay-login');
             formOverlay.classList.toggle('form_closed');
-
+    
             this.toggleScroll(window.getComputedStyle(formOverlay).display);
         };
-
+    
         this.toggleScroll = function(style) {
             if (style === 'block') {
                 document.body.style.overflow = 'hidden';
@@ -689,41 +688,41 @@ const cryptoStatSPA = (function() {
                 document.body.style.overflow = 'auto';
             }
         };
-
+    
         this.clearForm = function(typeForm) {
             if (typeForm === 'login') {
                 myModuleContainer.querySelector('#email-login').value = '';
                 myModuleContainer.querySelector('#password-login').value = '';
             }
-
+    
             if (typeForm === 'singUp') {
                 myModuleContainer.querySelector('#email-singUp').value = '';
                 myModuleContainer.querySelector('#password-singUp').value = '';
             }
         };
-
+    
         this.updateDisabledLoginFormBtn = function(state) {
             myModuleContainer.querySelector('#login-btn').disabled = state;
         };
-
+    
         this.updateDisabledSingUpFormBtn = function(state) {
             myModuleContainer.querySelector('#singUp-btn').disabled = state;
         };
-
+    
         this.changeStatus = function(userEmail) {
             myModuleContainer.querySelector('#userEmail').innerHTML = userEmail;
         };
-
+    
         this.showInvalidMessage = function(formName) {
             if (formName === 'login') {
                 myModuleContainer.querySelector('#invalid-message-login').innerHTML = invalidMessageLogin;
             }
-
+    
             if (formName === 'singUp') {
                 myModuleContainer.querySelector('#invalid-message-singUp').innerHTML = invalidMessageSingUp;
             }
         };
-
+    
         this.updateInvalidPasswordMessageLogin = function(countSymbols) {
             if (countSymbols < 7) {
                 myModuleContainer.querySelector('#invalid-message-login').innerHTML = invalidMessagePasswordLogin;
@@ -731,7 +730,7 @@ const cryptoStatSPA = (function() {
                 myModuleContainer.querySelector('#invalid-message-login').innerHTML = '';
             }
         };
-
+    
         this.updateInvalidPasswordMessageSingUp = function(countSymbols) {
             if (countSymbols < 7) {
                 myModuleContainer.querySelector('#invalid-message-singUp').innerHTML = invalidMessagePasswordLogin;
@@ -739,15 +738,15 @@ const cryptoStatSPA = (function() {
                 myModuleContainer.querySelector('#invalid-message-singUp').innerHTML = '';
             }
         };
-
+    
         const createLoader = () => {
             const loader = document.createElement('div');
             loader.classList.add('loader');
             loader.id = 'loader';
-
+    
             return loader;
         };
-
+    
         this.toggleLoader = function(stateRequest, nameBlock) {
             setTimeout(() => {
                 if (nameBlock === 'chartTop10') {
@@ -760,9 +759,7 @@ const cryptoStatSPA = (function() {
                         }
                     }
                 }
-            }, 0);
-
-            setTimeout(() => {
+    
                 if (nameBlock === 'historycsChart') {
                     const historycsChartBlock = myModuleContainer.querySelector('#chart-statistics-block');
                     if (stateRequest) {
@@ -773,9 +770,7 @@ const cryptoStatSPA = (function() {
                         }
                     }
                 }
-            }, 0);
-
-            setTimeout(() => {
+    
                 if (nameBlock === 'coinInfoTable') {
                     const coinInfoTableBlock = myModuleContainer.querySelector('#coin-info-table-block');
                     if (stateRequest) {
@@ -786,9 +781,7 @@ const cryptoStatSPA = (function() {
                         }
                     }
                 }
-            }, 0);
-
-            setTimeout(() => {
+    
                 if (nameBlock === 'ownChart') {
                     const ownChartBlock = myModuleContainer.querySelector('#chart-block');
                     if (stateRequest) {
@@ -799,9 +792,7 @@ const cryptoStatSPA = (function() {
                         }
                     }
                 }
-            }, 0);
-
-            setTimeout(() => {
+    
                 if (nameBlock === 'ownTable') {
                     const ownTableBlock = myModuleContainer.querySelector('#crypto-info-table-block');
                     if (stateRequest) {
@@ -834,7 +825,6 @@ const cryptoStatSPA = (function() {
         const defaultCoinId = 'bitcoin';
         const defaultTypeChart = 'market-cap';
         let isLogin = null;
-
         let myId = null;
         let myCurrency = null;
         let myTypeChart = null;
@@ -975,7 +965,6 @@ const cryptoStatSPA = (function() {
             if (!window.sessionStorage.localData) {
                 myModuleView.createChart();
             }
-            
         };
 
         this.updateCurrency = function(value) {
@@ -985,18 +974,18 @@ const cryptoStatSPA = (function() {
         this.showNextCoins = function() {
             countCoinsInTable += 10;
             startCountCoinsInTable += 10;
+
             myModuleView.updateStatePrevBtn(false);
             myModuleView.buildTable(dataTable, countCoinsInTable, startCountCoinsInTable);
-
             myModuleView.checkDisabledBtn(countCoinsInRequest);
         };
 
         this.showPrevCoins = function() {
             countCoinsInTable -= 10;
             startCountCoinsInTable -= 10;
+
             myModuleView.updateStateNextBtn(false);
             myModuleView.buildTable(dataTable, countCoinsInTable, startCountCoinsInTable);
-
             myModuleView.checkDisabledBtn(countCoinsInRequest);
         };
 
@@ -1022,7 +1011,6 @@ const cryptoStatSPA = (function() {
             }
 
             const parseDataHour = data => {
-                console.log(data);
                 myModuleView.updateDisableCheckboxes(false);
                 const timeArr = [];
                 const priceArr = [];
@@ -1292,7 +1280,7 @@ const cryptoStatSPA = (function() {
             createUserWithEmailAndPassword(auth, inputEmailSingUpValue, inputPasswordSingUpValue)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    //тут можно перенаправить на дуругю страницу
+                    window.location.hash = '#about'; // при регистрации перенаправить на about
                     set(ref(database, 'users/' + user.uid), {
                         email: inputEmailSingUpValue,
                         password : inputPasswordSingUpValue,
@@ -1318,6 +1306,7 @@ const cryptoStatSPA = (function() {
                 const user = userCredential.user;
                 const lgDate = new Date();
                 //обновляем дату последнего входа
+                //перенаправить на about
                 update(ref(database, 'users/' + user.uid), {
                     last_login: lgDate,
                 })
@@ -1333,7 +1322,7 @@ const cryptoStatSPA = (function() {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log(errorMessage, 'NO logined');
+                console.log(errorMessage, 'NO login');
                 myModuleView.showInvalidMessage('login');
                 myModuleView.updateDisabledLoginFormBtn(false);
             });
@@ -1393,10 +1382,9 @@ const cryptoStatSPA = (function() {
         let checkedId = [];
         let checkedNameCoin = [];
         let currencySelect = null;
-        let currencySelectValue = null;
+        // let currencySelectValue = null;
         let periodSelect = null;
         let selectPeriodValue = null;
-        let selectTypesChartsValue = null;
         let inputEmailSingUp = null;
         let inputPasswordSingUp = null;
         let inputEmailLogin = null;
@@ -1480,7 +1468,7 @@ const cryptoStatSPA = (function() {
                 selectPeriodValue = periodSelect.value;
 
                 currencySelect = myModuleContainer.querySelector('#currency-select');
-                currencySelectValue = currencySelect.value;
+                // currencySelectValue = currencySelect.value;
             }
         };
 
@@ -1499,9 +1487,7 @@ const cryptoStatSPA = (function() {
             }
 
             if (event.target.classList.contains('link_info')) {
-                setTimeout(() => {
-                    myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
-                }, 0);
+                myModuleModel.getStatisticData(currencySelect.value, event.target.getAttribute('data-id'));
             }
 
             if (event.target.id === 'change-login-form-btn') {

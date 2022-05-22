@@ -93,7 +93,7 @@ const Footer = {
     render: (customClass = "") => {
         return `
         <footer id="footer" class="footer ${customClass}">
-            <p>&#169; Siarhei Melekh</p>
+            <p>&#169; CryptoStat by Siarhei Melekh</p>
         </footer>`;
     }
 };

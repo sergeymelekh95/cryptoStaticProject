@@ -86,7 +86,69 @@ const AboutPage = {
     render: (className = "container") => {
         return `
         <section class="${className}">
-            <p>About Content</p>
+            <div class="about-content">
+                <p class="about-text">
+                    Welcome to <a class="about_link" href="#main">CryptoStat!</a> This app was founded in May 2022 by Siarhei Melekh to provide up-to-date cryptocurrency prices, charts and data about the emerging cryptocurrency markets.
+                </p>
+                <div class="about-title-row">
+                    <div class="logo-about">
+                        <a class="abot-logo__link" href="#main">
+                            <img class="about-logo__img about-logo1__img" src="./img/logo_icons/logo_1.svg" alt="logo">
+                            <img class="about-logo__img about-logo2__img" src="./img/logo_icons/logo_2.svg" alt="logo">
+                        </a>
+                    </div>
+                    <h2 class="about_title">
+                        <a class="about_link" href="#main">CryptoStat<a>
+                    </h2>
+                </div>
+                <p class="about-text">
+                    We are a dynamically developing web app on cryptocurrencies.<a class="about_link" href="#main">CryptoStat<a> covers the most current and important information about the cryptocurrency market.
+                </p>
+                <p class="about__title_list">Related Links:</p>
+                <ul class="about__list">
+                    <li>All Your Crypto Market Data Needs in One Place
+                        <a href="#main">
+                            <img src="./img/menu_icons/home_page.svg" alt="home_page_icon">
+                        </a>.
+                    </li>
+                    <li>We Provide Live and Historic Crypto Charts for Free
+                        <a href="#info">
+                            <img src="./img/menu_icons/coin_info.svg" alt="coin_info">
+                        </a>.
+                    </li>
+                </ul>
+                <h2 class="about_title_FAQ">Frequently Asked Questions</h2>
+                <ul class="about__list_FAQ">
+                    <li>
+                        <p>What is the goal of the CryptoStat app?</p>
+                        <p>
+                            CryptoStat is a CRUD application that provides users with the most important crypto statistics they need, including price graphs, price tables and their changes, and a number of different graphs for major cryptocurrencies.
+                        </p>
+                    </li>
+                    <li>
+                        <p>What will the application be used for?</p>
+                        <p>
+                            With CryptoStat application, the user can easily evaluate cryptocurrency statistics, learn everything about history and performance. The user will also be able to check the current value of the selected currency in various world currencies.
+                        </p>
+                    </li>
+                    <li>
+                        <p>What is the target audience?</p>
+                        <p>
+                            Everyone who is interested in cryptocurrency and plans to invest, buy and sell popular digital currencies, tracking their statistics in one place.
+                        </p>
+                    </li>
+                    <li>
+                        <p>Can I use the project from mobile devices?</p>
+                        <p>
+                            Yes, that the web application adaptively and automatically adjusts to the available screen sizes and adequately displays information.
+                        </p>
+                    </li>
+                </ul>
+                <p class="about-text">
+                    All questions and suggestions about the work of the site send to:
+                    <a class="about_link" href="mailto:sergeymelekh95@gmail.com">sergeymelekh95@gmail.com</a>.
+                </p>
+            </div>
         </section>
         `;
     }
