@@ -58,9 +58,9 @@ const cryptoStatSPA = (function() {
         let chart = null;
         let myChart = null;
         let myTimeArr = null;
-        let backgroundColors = ['rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', '#b77322', '#3b3eac', '#5574a6', '#329262', '#651067', '#8b0707', '#e67300', '#6633cc', '#aaaa11', '#22aa99', '#994499', '#3366cc', '#316395', '#b82e2e', '#66aa00', '#dd4477', '#0099c6', '#990099', '#109618', '#ff9900', '#dc3912', '#3366cc', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)'];
+        let backgroundColors = ['rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)','rgba(153, 102, 255, 0.6)','rgba(255, 159, 64, 0.6)','#7AD36E','#DBE2DB','#A09E04','#F47FF7','#78FDC7','#A38451', '#994499', '#3366cc', '#316395', '#b82e2e', '#66aa00', '#dd4477', '#0099c6', '#990099', '#109618', '#ff9900', '#dc3912', '#3366cc', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)'];
         const defaultDataSet = [{
-            label: 'Choose coins in the checkbox below',
+            label: 'Select coins in the table below',
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgb(255, 99, 132)',
             data: [],
@@ -363,20 +363,37 @@ const cryptoStatSPA = (function() {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Сryptocurrency changes at different times'
+                            text: 'Сryptocurrency changes at different times',
+                            font: {
+                                size: 16
+                            },
+                            color: '#C9C9C9'
                         },
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 16,
+                                }
+                            }
+                        }
                     },
                     scales: {
                         x: {
                             title: {
                                 display: true,
-                                text: 'Time'
+                                text: 'Time',
+                                font: {
+                                    size: 16
+                                }
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Current in USD'
+                                text: 'Current in USD',
+                                font: {
+                                    size: 16
+                                },
                             },
                         }
                     }
@@ -385,6 +402,7 @@ const cryptoStatSPA = (function() {
     
             this.toggleLoader(false, 'ownChart');
             chart = document.getElementById('analytic-chart');
+            Chart.defaults.font.size = 13;
             myChart = new Chart(
                 chart,
                 config
@@ -465,7 +483,7 @@ const cryptoStatSPA = (function() {
             const data = {
                 labels: mynameCoinsArr,
                 datasets: [{
-                    label: 'Top 10 Market Cup',
+                    label: 'Value',
                     data: myMarketCupArr,
                     backgroundColor:[
                         'rgba(255, 99, 132, 0.6)',
@@ -474,12 +492,12 @@ const cryptoStatSPA = (function() {
                         'rgba(75, 192, 192, 0.6)',
                         'rgba(153, 102, 255, 0.6)',
                         'rgba(255, 159, 64, 0.6)',
-                        'rgba(255, 99, 132, 0.6)',//отсюда
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)'
+                        '#7AD36E',
+                        '#DBE2DB',
+                        '#A09E04',
+                        '#F47FF7',
+                        '#78FDC7',
+                        '#A38451'
                     ],
                     borderWidth: 1,
                     borderColor: '#777',
@@ -496,7 +514,18 @@ const cryptoStatSPA = (function() {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Top 10 Market cap in USD'
+                            text: 'Top 10 Market cap in USD',
+                            font: {
+                                size: 16
+                            },
+                            color: '#C9C9C9'
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 16,
+                                }
+                            }
                         }
                     },
                 }
@@ -621,20 +650,37 @@ const cryptoStatSPA = (function() {
                         plugins: {
                             title: {
                                 display: true,
-                                text: `History change ${id} ${nameChart} ${marketCapsObj.timeArr[0]} - ${marketCapsObj.timeArr[marketCapsObj.timeArr.length - 1]}`
+                                text: `History change ${id} ${nameChart} ${marketCapsObj.timeArr[0]} - ${marketCapsObj.timeArr[marketCapsObj.timeArr.length - 1]}`,
+                                font: {
+                                    size: 16
+                                },
+                                color: '#C9C9C9'
                             },
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 16,
+                                    }
+                                }
+                            }
                         },
                         scales: {
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Time'
-                                }
+                                    text: 'Time',
+                                    font: {
+                                        size: 14,
+                                    }
+                                },
                             },
                             y: {
                                 title: {
                                     display: true,
-                                    text: `Current in ${currency}`
+                                    text: `Current in ${currency.toUpperCase()}`,
+                                    font: {
+                                        size: 14,
+                                    }
                                 },
                             }
                         }

@@ -102,16 +102,16 @@ const AboutPage = {
                     </h2>
                 </div>
                 <p class="about-text">
-                    We are a dynamically developing web app on cryptocurrencies.<a class="about_link" href="#main">CryptoStat<a> covers the most current and important information about the cryptocurrency market.
+                    We are a dynamically developing web app on cryptocurrencies.<a class="about_link" href="#main"> CryptoStat<a> covers the most current and important information about the cryptocurrency market.
                 </p>
                 <p class="about__title_list">Related Links:</p>
                 <ul class="about__list">
-                    <li>All Your Crypto Market Data Needs in One Place
+                    <li>All Your crypto market data needs in One Place
                         <a href="#main">
                             <img src="./img/menu_icons/home_page.svg" alt="home_page_icon">
                         </a>.
                     </li>
-                    <li>We Provide Live and Historic Crypto Charts for Free
+                    <li>We provide live and historic Crypto Charts for Free
                         <a href="#info">
                             <img src="./img/menu_icons/coin_info.svg" alt="coin_info">
                         </a>.
@@ -145,8 +145,8 @@ const AboutPage = {
                     </li>
                 </ul>
                 <p class="about-text">
-                    All questions and suggestions about the work of the site send to:
-                    <a class="about_link" href="mailto:sergeymelekh95@gmail.com">sergeymelekh95@gmail.com</a>.
+                    All questions and suggestions about the work of the app send to:
+                    <a class="about_link" href="mailto:sergeymelekh95@gmail.com">sergeymelekh95@gmail.com</a>
                 </p>
             </div>
         </section>

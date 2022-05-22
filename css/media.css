@@ -49,6 +49,24 @@
     /* .symbol-coin, .changes, .crypto-info-table col {
         display: none;
     } */
+
+    .about__title_list {
+        margin: 50px 0 20px 0;
+        text-align: start;
+        font-size: 1.2rem;
+    }
+
+    .about__list {
+        margin: 0 0 0 10px;
+    }
+
+    .about__list_FAQ li p:first-child {
+        margin: 0 0 0 0;
+    }
+
+    .about__list_FAQ li p:last-child {
+        margin: 15px 0 15px 10px;
+    }
 }
 
 @media only screen and (max-width : 600px)  {

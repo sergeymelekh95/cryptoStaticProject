@@ -64,8 +64,12 @@ body {
     color: #B783EB;
 }
 
+.title {
+    color: #d9d9d9;
+}
+
 .about__title_list {
-    margin: 50px 0 20px 30px;
+    margin: 50px 0 7px 30px;
     text-align: start;
     font-size: 1.2rem;
 }
@@ -76,6 +80,10 @@ body {
 
 .about__list li {
     margin: 0 0 15px 0;
+}
+
+.about__list img {
+    margin: 0 0 0 10px;
 }
 
 .about-content a {
@@ -142,7 +150,7 @@ body {
 }
 
 .about__list_FAQ + p {
-    margin: 30px 0 0 0;
+    margin: 45px 0 0 0;
 }
 
 .mainmenu {
@@ -267,6 +275,7 @@ body {
 }
 
 .coin-stat_title {
+    color: #fff;
     margin-bottom: 12px;
 }
 
@@ -435,6 +444,7 @@ padding: .6em .8em .5em 1.4em;
 .footer p {
     color: #BFB7B7;
     padding: 20px 0;
+    margin: 0 0 0 52px;
 }
 
 .switch-block {
@@ -442,6 +452,10 @@ padding: .6em .8em .5em 1.4em;
     align-items: center;
     justify-content: end;
     margin-bottom: 10px;
+}
+
+.switch-block span {
+    color: #fff;
 }
 
 .switch {
@@ -735,6 +749,7 @@ padding: .6em .8em .5em 1.4em;
 }
 
 .userEmail {
+    color: #d9d9d9;
 }
 
 .about-logo1__img {
