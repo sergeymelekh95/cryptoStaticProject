@@ -8,7 +8,7 @@ const Header = {
             </div>
             <div id="form-overlay-singUp" class="form-overlay form_closed">
                 <form action="#" id="form-singUp" class="form form-singUp">
-                    <p class="form-title">Sing Up</p>
+                    <p class="form-title">Sign Up</p>
                     <label for="userName-input">Name</label>
                     <br />
                     <input type="text" name="name-singUp" class="userName-input" id="userName-input">
@@ -25,7 +25,7 @@ const Header = {
                             <a id="change-login-form-btn" class="login-form-link">Login</a>
                         </p>
                     </div>
-                    <button id="singUp-btn" disabled="true" class="form-btn singUp-btn">Sing Up</button>
+                    <button id="singUp-btn" disabled="true" class="form-btn singUp-btn">Sign Up</button>
                 </form>
             </div>
             <div id="form-overlay-login" class="form-overlay form_closed">
@@ -41,7 +41,7 @@ const Header = {
                     <div class="text-form">
                         <p id="invalid-message-login" class="invalid-message"></p>
                         <p>Don't have an account?
-                            <a id="change-singUp-form-btn" class="login-form-link">Sign up</a>
+                            <a id="change-singUp-form-btn" class="login-form-link">Sign Up</a>
                         </p>
                     </div>
                     <button id="login-btn" disabled="true" class="form-btn login-btn">Login</button>
@@ -96,4 +96,11 @@ const Footer = {
             <p>&#169; CryptoStat by Siarhei Melekh</p>
         </footer>`;
     }
+};
+
+export const components = {
+    Header,
+    Saidbar,
+    Content,
+    Footer
 };

@@ -169,3 +169,11 @@ const ErrorPage = {
         `;
     }
 };
+
+export const routes = {
+    main: HomePage,
+    about: AboutPage,
+    default: HomePage,
+    error: ErrorPage,
+    info: CoinInfo,
+};
